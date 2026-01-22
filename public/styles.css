@@ -1,0 +1,194 @@
+@font-face {
+  font-family: "Dancing Script";
+  src: url("fonts/DancingScript-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffe6f0;
+  color: #222;
+  overflow: hidden;
+}
+
+.navbar {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.brand {
+  font-weight: bold;
+  margin-right: 16px;
+  text-decoration: none;
+  color: #222;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #222;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.nav-link:hover {
+  background: #f0f0f0;
+}
+
+.content {
+  padding: 32px 24px;
+  text-align: center;
+  height: calc(100vh - 74px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 180px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.page-church .content {
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.35),
+      rgba(0, 0, 0, 0.35)
+    ),
+    url("images/hedviq elenora kyrka.webp") center/cover no-repeat;
+  color: #f7f4f0;
+}
+
+.page-home .content {
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.25),
+      rgba(0, 0, 0, 0.25)
+    ),
+    url("images/617033195_1517126349373409_2686703041751261117_n.png")
+      center/cover no-repeat;
+  color: #f7f4f0;
+}
+
+.page-home .home-hero {
+  margin-top: 180px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    gap: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .brand {
+    margin-right: 8px;
+  }
+
+  .content {
+    padding: 24px 16px;
+    height: calc(100vh - 62px);
+    padding-top: 120px;
+  }
+
+  .content h1 {
+    font-size: 34px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+  }
+
+  .page-home .home-hero {
+    margin-top: 120px;
+  }
+
+  .map-link {
+    width: 56px;
+    height: 56px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .map-link-icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .content h1 {
+    font-size: 30px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+}
+
+.map-link {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ffd1e8, #ffe8a3);
+  color: #222;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.map-link:hover {
+  transform: translateY(-2px);
+}
+
+.map-link-icon {
+  font-size: 28px;
+}
+
+.page-venue .content {
+  position: relative;
+  color: #1f1f1f;
+}
+
+.page-venue .content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("images/venue.webp") center/cover no-repeat;
+  filter: blur(6px);
+  transform: scale(1.05);
+  z-index: 0;
+}
+
+.page-venue .content > * {
+  position: relative;
+  z-index: 1;
+}
+
+.page-venue .map-link {
+  position: fixed;
+}
+
+.content h1 {
+  font-size: 48px;
+  margin-bottom: 8px;
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 28px;
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
+}
