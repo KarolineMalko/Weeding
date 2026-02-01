@@ -43,12 +43,13 @@ body {
 
 .content {
   padding: 32px 24px;
-  text-align: center;
+  text-align: right;
   height: calc(100vh - 74px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-top: 180px;
+  padding-top: 0;
+  padding-right: 88px;
   box-sizing: border-box;
   position: relative;
 }
@@ -58,8 +59,33 @@ body {
       rgba(0, 0, 0, 0.35),
       rgba(0, 0, 0, 0.35)
     ),
-    url("images/hedviq elenora kyrka.webp") center/cover no-repeat;
+    url("images/Church.png") center/cover no-repeat;
   color: #f7f4f0;
+}
+
+.church-time {
+  align-self: center;
+  text-align: center;
+  margin-top: -20px;
+}
+
+.church-title {
+  margin-bottom: 4px;
+}
+
+.church-address {
+  margin-top: 4px;
+}
+
+.church-details {
+  padding-right: 21px;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+.venue-details {
+  align-self: center;
+  text-align: center;
 }
 
 .page-home .content {
@@ -67,13 +93,15 @@ body {
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     ),
-    url("images/617033195_1517126349373409_2686703041751261117_n.png")
-      center/cover no-repeat;
+    url("images/Home.png") center/cover no-repeat;
   color: #f7f4f0;
 }
 
 .page-home .home-hero {
   margin-top: 180px;
+  align-self: flex-end;
+  text-align: center;
+  display: inline-block;
 }
 
 @media (max-width: 768px) {
@@ -102,7 +130,27 @@ body {
   }
 
   .page-home .home-hero {
-    margin-top: 120px;
+    margin-top: -85px;
+  }
+
+  .page-home .content {
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.25),
+        rgba(0, 0, 0, 0.25)
+      ),
+      url("images/HomeMobil.png") center/cover no-repeat;
+  }
+
+  .page-church .content {
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.35)
+      ),
+      url("images/ChurchMobil.png") center/cover no-repeat;
+  }
+
+  .page-venue .content::before {
+    background: url("images/VenueMobil.png") center/cover no-repeat;
   }
 
   .map-link {
@@ -159,15 +207,14 @@ body {
 
 .page-venue .content {
   position: relative;
-  color: #1f1f1f;
+  color: #f7f4f0;
 }
 
 .page-venue .content::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("images/venue.webp") center/cover no-repeat;
-  filter: blur(6px);
+  background: url("images/VenueMobil.png") center/cover no-repeat;
   transform: scale(1.05);
   z-index: 0;
 }
@@ -181,14 +228,23 @@ body {
   position: fixed;
 }
 
+.page-church .content,
+.page-venue .content {
+  padding-top: 300px;
+}
+
 .content h1 {
-  font-size: 48px;
-  margin-bottom: 8px;
+  font-size: 41px;
+  margin-bottom: -30px;
+  margin-top: 160px;
+  position: relative;
+  top: -24px;
   font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
 }
 
 .subtitle {
-  margin-top: 8px;
+  margin-top: 9px;
+  margin-bottom: 0px;
   font-size: 28px;
   font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
 }
