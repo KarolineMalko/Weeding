@@ -59,7 +59,7 @@ body {
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     ),
-    url("images/ChurchMobile.png") center/cover no-repeat;
+    url("images/ChurchMobile.png?v=2") center/cover no-repeat;
   color: #f7f4f0;
 }
 
@@ -98,7 +98,7 @@ body {
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     ),
-    url("images/HomeMobile.png") center/cover no-repeat;
+    url("images/HomeMobile.png?v=2") center/cover no-repeat;
   color: #f7f4f0;
 }
 
@@ -143,7 +143,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/HomeMobile.png") center/cover no-repeat;
+      url("images/HomeMobile.png?v=2") center/cover no-repeat;
   }
 
   .page-church .content {
@@ -151,7 +151,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/ChurchMobile.png") center/cover no-repeat;
+      url("images/ChurchMobile.png?v=2") center/cover no-repeat;
   }
 
   .page-venue .content::before {
@@ -159,7 +159,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/VenueMobile.png") center/cover no-repeat;
+      url("images/VenueMobile.png?v=2") center/cover no-repeat;
   }
 
   .map-link {
