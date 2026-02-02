@@ -59,7 +59,7 @@ body {
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     ),
-    url("images/ChurchMobile.png?v=2") center/cover no-repeat;
+    url("images/churchMobile.png?v=2") center/cover no-repeat;
   color: #f7f4f0;
 }
 
@@ -74,8 +74,13 @@ body {
 }
 
 .page-church .church-title {
-  text-align: left;
+  text-align: center;
   width: 100%;
+  font-size: 34px;
+}
+
+.page-church .subtitle {
+  font-size: 22px;
 }
 
 .church-address {
@@ -93,12 +98,20 @@ body {
   text-align: center;
 }
 
+.page-venue .church-title {
+  font-size: 34px;
+}
+
+.page-venue .subtitle {
+  font-size: 22px;
+}
+
 .page-home .content {
   background: linear-gradient(
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     ),
-    url("images/HomeMobile.png?v=2") center/cover no-repeat;
+    url("images/HomeMobil.png?v=2") center/cover no-repeat;
   color: #f7f4f0;
 }
 
@@ -143,7 +156,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/HomeMobile.png?v=2") center/cover no-repeat;
+      url("images/HomeMobil.png?v=2") center/cover no-repeat;
   }
 
   .page-church .content {
@@ -151,7 +164,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/ChurchMobile.png?v=2") center/cover no-repeat;
+      url("images/churchMobile.png?v=2") center/cover no-repeat;
   }
 
   .page-venue .content::before {
@@ -159,7 +172,7 @@ body {
         rgba(0, 0, 0, 0.25),
         rgba(0, 0, 0, 0.25)
       ),
-      url("images/VenueMobile.png?v=2") center/cover no-repeat;
+      url("images/venueMobile.png?v=2") center/cover no-repeat;
   }
 
   .map-link {
@@ -224,9 +237,10 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    rgba(0, 0, 0, 0.25),
-    rgba(0, 0, 0, 0.25)
-  );
+      rgba(0, 0, 0, 0.25),
+      rgba(0, 0, 0, 0.25)
+    ),
+    url("images/venueMobile.png?v=2") center/cover no-repeat;
   z-index: 1;
 }
 
