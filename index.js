@@ -10,6 +10,7 @@ const routes = {
   "/": "home.html",
   "/church": "church.html",
   "/venue": "venue.html",
+  "/last": "last.html",
 };
 
 const clients = new Set();

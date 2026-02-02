@@ -262,6 +262,53 @@ body {
   z-index: 0;
 }
 
+.page-last .content {
+  padding-top: 0;
+}
+
+.last-content {
+  padding-right: 24px;
+  text-align: left;
+  align-items: stretch;
+  gap: 24px;
+  background: url("images/lastPage.png?v=2") center/cover no-repeat;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.last-hero {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.last-section {
+  padding: 16px 8px;
+}
+
+.last-section h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.last-section .subtitle {
+  font-size: 19px;
+  margin-top: 4px;
+}
+
+.contact-number {
+  font-size: 19px;
+  display: block;
+  margin-top: 8px;
+}
+
+.contact-name {
+  font-size: 22px;
+}
+
 .page-church .content,
 .page-venue .content {
   padding-top: 300px;
