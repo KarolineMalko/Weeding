@@ -2,7 +2,8 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 0;
+const HOST = "127.0.0.1";
 
 const pagesDir = path.join(__dirname, "pages");
 const publicDir = path.join(__dirname, "public");
@@ -38,7 +39,9 @@ const server = http.createServer((req, res) => {
     urlPath === "/styles.css" ||
     urlPath === "/reload.js" ||
     urlPath.startsWith("/images/") ||
-    urlPath.startsWith("/fonts/")
+    urlPath.startsWith("/fonts/") ||
+    urlPath.startsWith("/videos/") ||
+    urlPath.startsWith("/Videos/")
   ) {
     const safePath = decodeURIComponent(
       urlPath.startsWith("/public/") ? urlPath.replace("/public/", "") : urlPath
@@ -58,7 +61,13 @@ const server = http.createServer((req, res) => {
                 ? "image/webp"
                 : ext === ".png"
                   ? "image/png"
-                  : "application/octet-stream";
+                  : ext === ".jpeg" || ext === ".jpg"
+                    ? "image/jpeg"
+                    : ext === ".mp4"
+                      ? "video/mp4"
+                      : ext === ".mov"
+                        ? "video/quicktime"
+                        : "application/octet-stream";
       res.writeHead(200, { "Content-Type": contentType });
       res.end(file);
     } catch (error) {
@@ -81,8 +90,9 @@ const server = http.createServer((req, res) => {
   res.end(html);
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+server.listen(PORT, HOST, () => {
+  const address = server.address();
+  console.log(`Server running at http://${HOST}:${address.port}/`);
 });
 
 const projectRoot = __dirname;
