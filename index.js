@@ -95,9 +95,18 @@ server.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${address.port}/`);
 });
 
-const projectRoot = __dirname;
-fs.watch(projectRoot, { recursive: true }, () => {
-  for (const client of clients) {
-    client.write("data: reload\n\n");
+const watchPaths = [pagesDir, publicDir];
+for (const watchPath of watchPaths) {
+  try {
+    const watcher = fs.watch(watchPath, { recursive: true }, () => {
+      for (const client of clients) {
+        client.write("data: reload\n\n");
+      }
+    });
+    watcher.on("error", (error) => {
+      console.warn(`Reload watcher disabled for ${watchPath}: ${error.message}`);
+    });
+  } catch (error) {
+    console.warn(`Reload watcher failed for ${watchPath}: ${error.message}`);
   }
-});
+}
