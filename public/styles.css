@@ -70,6 +70,14 @@ body {
   display: inline-block;
 }
 
+.page-home .content h1 {
+  font-size: 70px;
+}
+
+.page-home .subtitle {
+  font-size: 34px;
+}
+
 .page-church .content {
   background: linear-gradient(
       rgba(0, 0, 0, 0.25),
@@ -89,10 +97,9 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-      rgba(0, 0, 0, 0.25),
-      rgba(0, 0, 0, 0.25)
-    ),
-    url("/public/images/VenueMobile.png?v=2") center/cover no-repeat;
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.25)
+  );
   z-index: 1;
 }
 
@@ -220,10 +227,16 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 70px;
 }
 
 .last-section {
   padding: 16px 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
 }
 
 .last-section h2 {
@@ -275,6 +288,14 @@ body {
     margin-top: -120px;
   }
 
+  .page-home .content h1 {
+    font-size: 54px;
+  }
+
+  .page-home .subtitle {
+    font-size: 26px;
+  }
+
   .page-home .content {
     background: linear-gradient(
         rgba(0, 0, 0, 0.25),
@@ -293,10 +314,9 @@ body {
 
   .page-venue .content::before {
     background: linear-gradient(
-        rgba(0, 0, 0, 0.25),
-        rgba(0, 0, 0, 0.25)
-      ),
-      url("/public/images/VenueMobile.png?v=2") center/cover no-repeat;
+      rgba(0, 0, 0, 0.25),
+      rgba(0, 0, 0, 0.25)
+    );
   }
 
   .map-link {
@@ -323,5 +343,13 @@ body {
 
   .subtitle {
     font-size: 18px;
+  }
+
+  .page-home .content h1 {
+    font-size: 46px;
+  }
+
+  .page-home .subtitle {
+    font-size: 22px;
   }
 }
