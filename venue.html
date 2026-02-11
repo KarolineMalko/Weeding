@@ -8,10 +8,17 @@
   </head>
   <body class="page-venue">
     <nav class="navbar">
-      <a class="brand" href="index.html">Wedding</a>
-      <a class="nav-link" href="church.html">Church</a>
-      <a class="nav-link" href="venue.html">vinue</a>
-      <a class="nav-link" href="last.html">More</a>
+      <a class="brand" href="index.html" data-i18n="nav.wedding">Wedding</a>
+      <a class="nav-link" href="church.html" data-i18n="nav.church">Church</a>
+      <a class="nav-link" href="venue.html" data-i18n="nav.venue">Venue</a>
+      <a class="nav-link" href="last.html" data-i18n="nav.more">More</a>
+      <div class="lang-dropdown">
+        <button class="lang-btn" aria-label="Language">EN</button>
+        <div class="lang-menu">
+          <button data-lang="en">English</button>
+          <button data-lang="sv">Svenska</button>
+        </div>
+      </div>
     </nav>
     <main class="content">
       <video
@@ -34,10 +41,11 @@
         <span class="map-link-icon" aria-hidden="true">📍</span>
       </a>
       <div class="church-details venue-details">
-        <h1 class="church-title venue-title">Cello Slottet</h1>
-        <p class="subtitle church-time">18:00</p>
-        <p class="subtitle church-address">Segersbyvägen 7, 145 63 Norsborg</p>
+        <h1 class="church-title venue-title" data-i18n="venue.title">Cello Slottet</h1>
+        <p class="subtitle church-time" data-i18n="venue.time">18:00</p>
+        <p class="subtitle church-address" data-i18n="venue.address">Segersbyvägen 7, 145 63 Norsborg</p>
       </div>
     </main>
   </body>
+  <script src="public/language.js"></script>
 </html>

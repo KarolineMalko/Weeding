@@ -8,23 +8,30 @@
   </head>
   <body class="page-last">
     <nav class="navbar">
-      <a class="brand" href="index.html">Wedding</a>
-      <a class="nav-link" href="church.html">Church</a>
-      <a class="nav-link" href="venue.html">vinue</a>
-      <a class="nav-link" href="last.html">More</a>
+      <a class="brand" href="index.html" data-i18n="nav.wedding">Wedding</a>
+      <a class="nav-link" href="church.html" data-i18n="nav.church">Church</a>
+      <a class="nav-link" href="venue.html" data-i18n="nav.venue">Venue</a>
+      <a class="nav-link" href="last.html" data-i18n="nav.more">More</a>
+      <div class="lang-dropdown">
+        <button class="lang-btn" aria-label="Language">EN</button>
+        <div class="lang-menu">
+          <button data-lang="en">English</button>
+          <button data-lang="sv">Svenska</button>
+        </div>
+      </div>
     </nav>
     <main class="content last-content">
       <section class="last-hero">
-        <h1>Dress Code:</h1>
-        <p class="subtitle">Black Tie (Formal Evening Wear)</p>
-        <h2>RSVP by:</h2>
-        <p class="subtitle">01 juni 2026</p>
+        <h1 data-i18n="last.dresscode">Dress Code:</h1>
+        <p class="subtitle" data-i18n="last.dresscode-desc">Black Tie (Formal Evening Wear)</p>
+        <h2 data-i18n="last.rsvp">RSVP by:</h2>
+        <p class="subtitle" data-i18n="last.rsvp-date">01 juni 2026</p>
       </section>
       <section class="last-spacer">
-        <p class="subtitle">Parents deserve a night off too! Please join us for an adults-only celebration.</p>
+        <p class="subtitle" data-i18n="last.adults-only">Parents deserve a night off too! Please join us for an adults-only celebration.</p>
       </section>
       <section class="last-section">
-        <h2>Contact</h2>
+        <h2 data-i18n="last.contact">Contact</h2>
         <div class="contact-row">
           <div class="contact-item">
             <span class="contact-name">Erik</span>
@@ -38,4 +45,5 @@
       </section>
     </main>
   </body>
+  <script src="public/language.js"></script>
 </html>
