@@ -133,6 +133,12 @@ body {
   font-size: 34px;
 }
 
+.page-church .church-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .page-church .church-title {
   text-align: center;
   width: 100%;
@@ -158,6 +164,11 @@ body {
 
 .church-address {
   margin-top: 4px;
+}
+
+.page-church .church-address {
+  text-align: center;
+  align-self: center;
 }
 
 .venue-details {
@@ -223,14 +234,36 @@ body {
 }
 
 .last-hero {
-  min-height: 50vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: rgba(0, 0, 0, 0.35);
   border-radius: 12px;
-  padding: 24px;
-  margin-top: 70px;
+  padding: 10px 16px;
+  margin-top: 8px;
+}
+
+.last-spacer {
+  min-height: 24px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  padding: 16px 24px;
+}
+
+.last-spacer .subtitle {
+  margin: 0;
+  font-size: 22px;
+}
+
+.last-hero h2 {
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
+  font-size: 41px;
+  margin-bottom: -30px;
+  margin-top: 48px;
+  position: relative;
+  top: -24px;
 }
 
 .last-section {
@@ -277,6 +310,10 @@ body {
   }
 
   .content h1 {
+    font-size: 34px;
+  }
+
+  .last-hero h2 {
     font-size: 34px;
   }
 
@@ -338,6 +375,10 @@ body {
   }
 
   .content h1 {
+    font-size: 30px;
+  }
+
+  .last-hero h2 {
     font-size: 30px;
   }
 
