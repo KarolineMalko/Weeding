@@ -267,29 +267,39 @@ body {
 }
 
 .last-section {
-  padding: 16px 8px;
+  padding: 10px 8px;
   background: rgba(0, 0, 0, 0.35);
   border-radius: 12px;
 }
 
 .last-section h2 {
-  font-size: 18px;
-  margin-bottom: 6px;
+  font-size: 16px;
+  margin-bottom: 4px;
 }
 
 .last-section .subtitle {
-  font-size: 19px;
-  margin-top: 4px;
+  font-size: 17px;
+  margin-top: 2px;
+}
+
+.contact-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.contact-item {
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
 }
 
 .contact-name {
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .contact-number {
-  font-size: 19px;
+  font-size: 16px;
   display: block;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 @media (max-width: 768px) {
