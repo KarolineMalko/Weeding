@@ -165,9 +165,16 @@ body {
   z-index: 1;
 }
 
-.page-venue .content > :not(.venue-video) {
+.page-venue .content > :not(.venue-video):not(.map-link) {
   position: relative;
   z-index: 2;
+}
+
+.page-venue .map-link {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
 }
 
 .venue-video {
@@ -184,6 +191,54 @@ body {
   padding-top: 300px;
 }
 
+.page-church .content {
+  padding-top: 28px;
+}
+
+.church-quote {
+  margin: 0 0 32px 0;
+  padding: 0 24px;
+  text-align: left;
+  max-width: 400px;
+}
+
+.church-quote-love {
+  text-align: left;
+  max-width: 460px;
+  margin-bottom: 24px;
+}
+
+.church-quote-love .church-quote-love-word {
+  text-align: center;
+  font-family: "Dancing Script", "Georgia", cursive;
+  font-size: 56px;
+  font-weight: 500;
+  color: rgba(247, 244, 240, 0.95);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+  line-height: 1;
+  margin: 0 0 12px 0;
+}
+
+.church-quote-line {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  line-height: 1.6;
+  color: rgba(247, 244, 240, 0.95);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+  margin: 0 0 8px 0;
+}
+
+.church-quote-cite {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-style: normal;
+  color: rgba(247, 244, 240, 0.9);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+  display: block;
+  text-align: right;
+  margin-top: 8px;
+}
+
 .church-details {
   padding-right: 21px;
   color: #ffffff;
@@ -195,10 +250,15 @@ body {
   font-size: 34px;
 }
 
+.page-church .church-quote {
+  align-self: center;
+}
+
 .page-church .church-details {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 240px;
 }
 
 .page-church .church-title {
@@ -383,6 +443,10 @@ body {
 
   .content h1 {
     font-size: 34px;
+  }
+
+  .church-quote-love .church-quote-love-word {
+    font-size: 42px;
   }
 
   .last-hero h2 {
