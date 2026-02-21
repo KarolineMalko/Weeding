@@ -172,8 +172,8 @@ body {
 
 .page-venue .map-link {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 8px;
+  right: 8px;
   z-index: 100;
 }
 
