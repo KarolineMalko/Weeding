@@ -1,5 +1,5 @@
 (function () {
-  const PAGES = ["/", "/church", "/venue", "/last"];
+  const PAGES = ["/", "/church", "/venue", "/photo", "/last"];
   const DEBOUNCE_MS = 80;
   const SWIPE_THRESHOLD = 28;
 
@@ -37,6 +37,10 @@
 
     try {
       const res = await fetch(url);
+      if (!res.ok) {
+        window.location.replace(path === "/" ? "/" : path);
+        return;
+      }
       const html = await res.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");

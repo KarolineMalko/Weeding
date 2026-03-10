@@ -10,7 +10,7 @@ body {
   margin: 0;
   padding-top: 57px;
   font-family: Arial, Helvetica, sans-serif;
-  background: #ffe6f0;
+  background: #ffe6f0 url("/public/images/wedding-bg.png") center/cover no-repeat fixed;
   color: #222;
   overflow: hidden;
 }
@@ -25,8 +25,8 @@ body {
   gap: 24px;
   align-items: center;
   padding: 16px 24px;
-  background: #e6f4ff;
-  border-bottom: 1px solid #b3d9ff;
+  background: rgba(230, 244, 255, 0.85);
+  border-bottom: 1px solid rgba(179, 217, 255, 0.6);
 }
 
 .nav-indicator {
@@ -298,12 +298,44 @@ body {
 }
 
 .page-church .content,
-.page-venue .content {
+.page-venue .content,
+.page-photo .content {
   padding-top: 300px;
 }
 
 .page-church .content {
   padding-top: 28px;
+}
+
+.page-photo .content {
+  padding-top: 28px;
+  padding-right: 24px;
+  background: url("/public/images/photo-page-bg.png") center/cover no-repeat;
+  color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-photo .photo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+}
+
+.page-photo .photo-qr {
+  width: 160px;
+  height: 160px;
+  background: #fff url("/public/images/qr-code.png") center/contain no-repeat;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.page-photo .photo-text {
+  margin-top: 16px;
+  font-size: 18px;
+  color: #555;
 }
 
 .church-quote {
@@ -618,6 +650,23 @@ body {
       rgba(0, 0, 0, 0.25),
       rgba(0, 0, 0, 0.25)
     );
+  }
+
+  .page-photo .content {
+    background: url("/public/images/photo-page-bg.png") center/cover no-repeat;
+  }
+
+  .page-photo .photo-block {
+    margin-top: 0;
+  }
+
+  .page-photo .photo-qr {
+    width: 140px;
+    height: 140px;
+  }
+
+  .page-photo .photo-text {
+    font-size: 16px;
   }
 
   .map-link {

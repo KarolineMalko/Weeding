@@ -1,5 +1,5 @@
 (function () {
-  const PAGES = ["/", "/church", "/venue", "/last"];
+  const PAGES = ["/", "/church", "/venue", "/photo", "/last"];
 
   function getPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
@@ -16,7 +16,7 @@
   }
 
   function triggerEasterEgg() {
-    if (getPageIndex() !== 3) return;
+    if (getPageIndex() !== 4) return;
     if (sessionStorage.getItem("wedding-confetti")) return;
     sessionStorage.setItem("wedding-confetti", "1");
 

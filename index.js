@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const PORT = process.env.PORT || 0;
+const PORT = process.env.PORT || 3000;
 const HOST = "127.0.0.1";
 
 const pagesDir = path.join(__dirname, "pages");
@@ -11,6 +11,7 @@ const routes = {
   "/": "home.html",
   "/church": "church.html",
   "/venue": "venue.html",
+  "/photo": "photo.html",
   "/last": "last.html",
 };
 
@@ -77,17 +78,32 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const page = routes[urlPath];
-  if (!page) {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("Not found");
-    return;
-  }
+  let page = routes[urlPath];
+  let htmlPath;
 
-  const htmlPath = path.join(pagesDir, page);
-  const html = fs.readFileSync(htmlPath, "utf8");
-  res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-  res.end(html);
+  if (page) {
+    htmlPath = path.join(pagesDir, page);
+  } else {
+    // Fallback: serve /photo from photo/index.html (for static-server compatibility)
+    const dirIndex = path.join(__dirname, urlPath.slice(1), "index.html");
+    if (urlPath === "/photo" && fs.existsSync(dirIndex)) {
+      htmlPath = dirIndex;
+    } else {
+      console.warn("[404] path:", JSON.stringify(urlPath), "| routes:", Object.keys(routes).join(", "));
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.end("Not found");
+      return;
+    }
+  }
+  try {
+    const html = fs.readFileSync(htmlPath, "utf8");
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(html);
+  } catch (err) {
+    console.error("Error serving page:", err.message);
+    res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
+    res.end("<h1>Server Error</h1><p>Could not load page.</p>");
+  }
 });
 
 server.listen(PORT, HOST, () => {
