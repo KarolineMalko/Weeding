@@ -1,7 +1,7 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 150;
-  const SWIPE_THRESHOLD = 35;
+  const DEBOUNCE_MS = 80;
+  const SWIPE_THRESHOLD = 28;
 
   function getCurrentPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
