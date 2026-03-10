@@ -1,7 +1,7 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 280;
-  const SWIPE_THRESHOLD = 50;
+  const DEBOUNCE_MS = 180;
+  const SWIPE_THRESHOLD = 45;
 
   function prefersReducedMotion() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,7 +40,7 @@
     storePosition();
 
     const useTransition = !prefersReducedMotion();
-    const duration = 450;
+    const duration = 220;
 
     try {
       if (useTransition) {
