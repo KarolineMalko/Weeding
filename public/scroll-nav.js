@@ -9,12 +9,11 @@
     return idx >= 0 ? idx : 0;
   }
 
-  function goToPage(index) {
-    if (index < 0 || index >= PAGES.length) return;
+  function storePosition() {
     const indicator = document.querySelector(".nav-indicator");
-    if (indicator) {
+    const nav = document.querySelector(".navbar");
+    if (indicator && nav) {
       const rect = indicator.getBoundingClientRect();
-      const nav = document.querySelector(".navbar");
       const navRect = nav.getBoundingClientRect();
       try {
         sessionStorage.setItem(
@@ -26,8 +25,13 @@
         );
       } catch (_) {}
     }
+  }
+
+  function goToPage(index) {
+    if (index < 0 || index >= PAGES.length) return;
+    storePosition();
     const path = PAGES[index];
-    window.location.href = path === "/" ? "/" : path;
+    window.location.replace(path === "/" ? "/" : path);
   }
 
   function handleScrollDown() {
@@ -67,4 +71,18 @@
   document.addEventListener("wheel", onWheel, { passive: true });
   document.addEventListener("touchstart", onTouchStart, { passive: true });
   document.addEventListener("touchend", onTouchEnd, { passive: true });
+
+  document.querySelector(".navbar")?.addEventListener("click", (e) => {
+    const link = e.target.closest("a[href]");
+    if (!link || link.target === "_blank") return;
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("http") || href.startsWith("#")) return;
+    const path = href === "index.html" ? "/" : (href.startsWith("/") ? href : "/" + href.replace(".html", ""));
+    if (PAGES.includes(path)) {
+      e.preventDefault();
+      storePosition();
+      window.location.replace(path === "/" ? "/" : path);
+    }
+  });
+
 })();
