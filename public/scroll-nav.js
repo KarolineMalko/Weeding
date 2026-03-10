@@ -1,6 +1,7 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 400;
+  const DEBOUNCE_MS = 150;
+  const SWIPE_THRESHOLD = 35;
 
   function getCurrentPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
@@ -27,11 +28,32 @@
     }
   }
 
-  function goToPage(index) {
+  async function goToPage(index) {
     if (index < 0 || index >= PAGES.length) return;
-    storePosition();
     const path = PAGES[index];
-    window.location.replace(path === "/" ? "/" : path);
+    const url = path === "/" ? "/" : path;
+
+    storePosition();
+
+    try {
+      const res = await fetch(url);
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      document.body.className = doc.body.className;
+      document.body.innerHTML = doc.body.innerHTML;
+
+      const title = doc.querySelector("title");
+      if (title) document.title = title.textContent;
+
+      document.querySelectorAll("video[autoplay]").forEach((v) => v.play().catch(() => {}));
+
+      history.replaceState(null, "", path === "/" ? "/" : path);
+      window.dispatchEvent(new CustomEvent("wedding:pagechange"));
+    } catch (_) {
+      window.location.replace(path === "/" ? "/" : path);
+    }
   }
 
   function handleScrollDown() {
@@ -54,7 +76,6 @@
   }
 
   let touchStartY = 0;
-  const SWIPE_THRESHOLD = 50;
   function onTouchStart(e) {
     touchStartY = e.touches[0].clientY;
   }
@@ -72,8 +93,8 @@
   document.addEventListener("touchstart", onTouchStart, { passive: true });
   document.addEventListener("touchend", onTouchEnd, { passive: true });
 
-  document.querySelector(".navbar")?.addEventListener("click", (e) => {
-    const link = e.target.closest("a[href]");
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest(".navbar a[href]");
     if (!link || link.target === "_blank") return;
     const href = link.getAttribute("href");
     if (!href || href.startsWith("http") || href.startsWith("#")) return;
@@ -81,7 +102,7 @@
     if (PAGES.includes(path)) {
       e.preventDefault();
       storePosition();
-      window.location.replace(path === "/" ? "/" : path);
+      goToPage(PAGES.indexOf(path));
     }
   });
 

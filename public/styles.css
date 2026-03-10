@@ -99,6 +99,44 @@ body {
   z-index: 1;
 }
 
+/* Scroll progress indicator */
+.scroll-progress {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.scroll-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.scroll-dot.active {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  transform: scale(1.25);
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .lang-dropdown {
   position: relative;
   margin-left: auto;
@@ -184,6 +222,7 @@ body {
   justify-content: flex-start;
   padding-top: 0;
   padding-right: 88px;
+  animation: page-enter 0.4s ease-out;
   box-sizing: border-box;
   position: relative;
 }
@@ -505,6 +544,15 @@ body {
 
   .nav-indicator {
     height: 36px;
+  }
+
+  .scroll-progress {
+    bottom: 24px;
+  }
+
+  .scroll-dot {
+    width: 6px;
+    height: 6px;
   }
 
   body {

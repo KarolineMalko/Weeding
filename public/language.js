@@ -94,9 +94,12 @@ function updateLangDropdown() {
   if (btn) btn.textContent = curr === "sv" ? "SV" : "EN";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function init() {
   document.documentElement.lang = getLang();
   applyTranslations();
   initLangDropdown();
   updateLangDropdown();
-});
+}
+
+document.addEventListener("DOMContentLoaded", init);
+window.addEventListener("wedding:pagechange", init);

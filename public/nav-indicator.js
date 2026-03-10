@@ -83,4 +83,6 @@
   } else {
     init();
   }
+
+  window.addEventListener("wedding:pagechange", () => updateIndicator(true));
 })();
