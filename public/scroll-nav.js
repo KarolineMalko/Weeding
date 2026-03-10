@@ -1,7 +1,11 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 150;
-  const SWIPE_THRESHOLD = 35;
+  const DEBOUNCE_MS = 280;
+  const SWIPE_THRESHOLD = 50;
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
 
   function getCurrentPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
@@ -35,7 +39,16 @@
 
     storePosition();
 
+    const useTransition = !prefersReducedMotion();
+    const duration = 450;
+
     try {
+      if (useTransition) {
+        document.body.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
+        document.body.style.opacity = "0";
+        await new Promise((r) => setTimeout(r, duration));
+      }
+
       const res = await fetch(url);
       const html = await res.text();
       const parser = new DOMParser();
@@ -44,6 +57,10 @@
       document.body.className = doc.body.className;
       document.body.innerHTML = doc.body.innerHTML;
 
+      if (useTransition) {
+        document.body.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
+      }
+
       const title = doc.querySelector("title");
       if (title) document.title = title.textContent;
 
@@ -51,6 +68,14 @@
 
       history.replaceState(null, "", path === "/" ? "/" : path);
       window.dispatchEvent(new CustomEvent("wedding:pagechange"));
+
+      if (useTransition) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            document.body.style.opacity = "1";
+          });
+        });
+      }
     } catch (_) {
       window.location.replace(path === "/" ? "/" : path);
     }
