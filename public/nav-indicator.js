@@ -1,9 +1,9 @@
 (function () {
   const PAGE_SELECTORS = {
     "page-home": ".brand",
-    "page-church": '.nav-link[href="/church"]',
-    "page-venue": '.nav-link[href="/venue"]',
-    "page-last": '.nav-link[href="/last"]',
+    "page-church": ".navbar .nav-link:nth-of-type(1)",
+    "page-venue": ".navbar .nav-link:nth-of-type(2)",
+    "page-last": ".navbar .nav-link:nth-of-type(3)",
   };
 
   function updateIndicator(animateFromStored) {
