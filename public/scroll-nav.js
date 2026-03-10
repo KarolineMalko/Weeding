@@ -1,7 +1,7 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 180;
-  const SWIPE_THRESHOLD = 45;
+  const DEBOUNCE_MS = 120;
+  const SWIPE_THRESHOLD = 40;
 
   function prefersReducedMotion() {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,26 +40,24 @@
     storePosition();
 
     const useTransition = !prefersReducedMotion();
-    const duration = 220;
+    const duration = 120;
 
     try {
-      if (useTransition) {
-        document.body.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
-        document.body.style.opacity = "0";
-        await new Promise((r) => setTimeout(r, duration));
-      }
-
-      const res = await fetch(url);
-      const html = await res.text();
+      const [html] = await Promise.all([
+        fetch(url).then((r) => r.text()),
+        useTransition
+          ? new Promise((resolve) => {
+              document.body.style.transition = `opacity ${duration}ms ease-out`;
+              document.body.style.opacity = "0";
+              setTimeout(resolve, duration);
+            })
+          : Promise.resolve(),
+      ]);
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
 
       document.body.className = doc.body.className;
       document.body.innerHTML = doc.body.innerHTML;
-
-      if (useTransition) {
-        document.body.style.transition = `opacity ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
-      }
 
       const title = doc.querySelector("title");
       if (title) document.title = title.textContent;
@@ -70,6 +68,8 @@
       window.dispatchEvent(new CustomEvent("wedding:pagechange"));
 
       if (useTransition) {
+        document.body.style.opacity = "0";
+        document.body.style.transition = `opacity ${duration}ms ease-in`;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             document.body.style.opacity = "1";
