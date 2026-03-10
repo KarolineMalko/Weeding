@@ -1,11 +1,7 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last"];
-  const DEBOUNCE_MS = 120;
-  const SWIPE_THRESHOLD = 40;
-
-  function prefersReducedMotion() {
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }
+  const DEBOUNCE_MS = 150;
+  const SWIPE_THRESHOLD = 35;
 
   function getCurrentPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
@@ -39,20 +35,9 @@
 
     storePosition();
 
-    const useTransition = !prefersReducedMotion();
-    const duration = 120;
-
     try {
-      const [html] = await Promise.all([
-        fetch(url).then((r) => r.text()),
-        useTransition
-          ? new Promise((resolve) => {
-              document.body.style.transition = `opacity ${duration}ms ease-out`;
-              document.body.style.opacity = "0";
-              setTimeout(resolve, duration);
-            })
-          : Promise.resolve(),
-      ]);
+      const res = await fetch(url);
+      const html = await res.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
 
@@ -66,16 +51,6 @@
 
       history.replaceState(null, "", path === "/" ? "/" : path);
       window.dispatchEvent(new CustomEvent("wedding:pagechange"));
-
-      if (useTransition) {
-        document.body.style.opacity = "0";
-        document.body.style.transition = `opacity ${duration}ms ease-in`;
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            document.body.style.opacity = "1";
-          });
-        });
-      }
     } catch (_) {
       window.location.replace(path === "/" ? "/" : path);
     }
