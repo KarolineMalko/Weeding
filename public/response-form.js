@@ -37,9 +37,14 @@
       const guests = form.querySelector("#rsvp-guests")?.value?.trim() || "";
 
       const isYes = attendance === "yes";
-      let body = `RSVP Wedding\n${isYes ? "Attending" : "Not attending"}\nName: ${name}`;
-      if (isYes && guests) body += `\nGuests: ${guests}`;
-      if (message) body += `\nMessage: ${message}`;
+      let body;
+      if (isYes) {
+        body = `RSVP Wedding\nAnswer: Yes\nName: ${name}\nGuests: ${guests || "1"}`;
+        if (message) body += `\nMessage: ${message}`;
+      } else {
+        body = `Name: ${name}\nAnswer: No`;
+        if (message) body += `\nMessage: ${message}`;
+      }
 
       window.location.href = "sms:+46700534084?body=" + encodeURIComponent(body);
 
