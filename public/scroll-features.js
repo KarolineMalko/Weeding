@@ -1,5 +1,5 @@
 (function () {
-  const PAGES = ["/", "/church", "/venue", "/photo", "/last"];
+  const PAGES = ["/", "/church", "/venue", "/last", "/response"];
 
   function getPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";

@@ -1,5 +1,5 @@
 (function () {
-  const PAGES = ["/", "/church", "/venue", "/photo", "/last"];
+  const PAGES = ["/", "/church", "/venue", "/last", "/response"];
   const DEBOUNCE_MS = 80;
   const SWIPE_THRESHOLD = 28;
 

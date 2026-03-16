@@ -11,8 +11,9 @@ const routes = {
   "/": "home.html",
   "/church": "church.html",
   "/venue": "venue.html",
-  "/photo": "photo.html",
+  // "/photo": "photo.html", // commented out
   "/last": "last.html",
+  "/response": "response.html",
 };
 
 const clients = new Set();
@@ -84,9 +85,8 @@ const server = http.createServer((req, res) => {
   if (page) {
     htmlPath = path.join(pagesDir, page);
   } else {
-    // Fallback: serve /photo from photo/index.html (for static-server compatibility)
     const dirIndex = path.join(__dirname, urlPath.slice(1), "index.html");
-    if (urlPath === "/photo" && fs.existsSync(dirIndex)) {
+    if (urlPath === "/response" && fs.existsSync(dirIndex)) {
       htmlPath = dirIndex;
     } else {
       console.warn("[404] path:", JSON.stringify(urlPath), "| routes:", Object.keys(routes).join(", "));

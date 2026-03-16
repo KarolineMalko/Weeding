@@ -298,8 +298,7 @@ body {
 }
 
 .page-church .content,
-.page-venue .content,
-.page-photo .content {
+.page-venue .content {
   padding-top: 300px;
 }
 
@@ -307,6 +306,7 @@ body {
   padding-top: 28px;
 }
 
+/* Photo page - commented out
 .page-photo .content {
   padding-top: 28px;
   padding-right: 24px;
@@ -337,6 +337,7 @@ body {
   font-size: 18px;
   color: #555;
 }
+*/
 
 .church-quote {
   margin: 0 0 32px 0;
@@ -567,6 +568,115 @@ body {
   margin-top: 4px;
 }
 
+/* Response page */
+.page-response .content {
+  padding-top: 28px;
+  padding-right: 24px;
+  background: url("/public/images/response-page-bg.png") center/cover no-repeat;
+  color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+}
+
+.response-form-section {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+.response-form-section h1 {
+  font-family: "Dancing Script", "Georgia", cursive;
+  font-size: 36px;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.rsvp-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rsvp-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.rsvp-option input {
+  width: 20px;
+  height: 20px;
+  accent-color: #b3d9ff;
+}
+
+.rsvp-form-fields {
+  margin-bottom: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+  text-align: left;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.message-example {
+  font-size: 12px;
+  color: #666;
+  margin: 6px 0 0 0;
+  font-style: italic;
+}
+
+.rsvp-submit {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #b3d9ff, #87ceeb);
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rsvp-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(135, 206, 250, 0.4);
+}
+
 @media (max-width: 768px) {
   .navbar {
     gap: 12px;
@@ -652,6 +762,24 @@ body {
     );
   }
 
+  .page-response .content {
+    padding-top: 24px;
+    background: url("/public/images/response-page-bg.png") center/cover no-repeat;
+  }
+
+  .response-form-section {
+    padding: 24px;
+  }
+
+  .response-form-section h1 {
+    font-size: 30px;
+  }
+
+  .rsvp-option {
+    font-size: 16px;
+  }
+
+  /* Photo page - commented out
   .page-photo .content {
     background: url("/public/images/photo-page-bg.png") center/cover no-repeat;
   }
@@ -668,6 +796,7 @@ body {
   .page-photo .photo-text {
     font-size: 16px;
   }
+  */
 
   .map-link {
     width: 56px;
