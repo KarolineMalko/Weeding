@@ -12,6 +12,7 @@
 
     function toggleFields() {
       const isYes = form.querySelector('input[name="attendance"]:checked')?.value === "yes";
+      formFields.hidden = false;
       if (guestsField) guestsField.hidden = !isYes;
       if (messageExample) messageExample.hidden = !isYes;
       if (guestsInput) {
@@ -20,13 +21,10 @@
       }
     }
 
-    formFields.hidden = true;
     attendanceRadios.forEach((radio) => {
-      radio.addEventListener("change", () => {
-        formFields.hidden = false;
-        toggleFields();
-      });
+      radio.addEventListener("change", toggleFields);
     });
+    toggleFields();
 
     const thankYou = document.getElementById("thank-you");
     const changeBtn = document.getElementById("change-response-btn");
@@ -62,6 +60,10 @@
       changeBtn.addEventListener("click", () => {
         if (thankYou) thankYou.hidden = true;
         form.hidden = false;
+        form.querySelector('input[name="attendance"][value="yes"]').checked = true;
+        const gi = form.querySelector("#rsvp-guests");
+        if (gi) gi.value = "1";
+        toggleFields();
       });
     }
   }
