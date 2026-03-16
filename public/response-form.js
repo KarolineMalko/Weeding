@@ -25,6 +25,7 @@
       radio.addEventListener("change", toggleFields);
     });
     toggleFields();
+    requestAnimationFrame(() => toggleFields());
 
     const thankYou = document.getElementById("thank-you");
     const changeBtn = document.getElementById("change-response-btn");
