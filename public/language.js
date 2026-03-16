@@ -5,7 +5,7 @@ const translations = {
     "nav.venue": "Venue",
     "nav.photo": "Photo",
     "nav.more": "More",
-    "nav.response": "Response",
+    "nav.response": "Resp",
     "home.welcome": "Welcome to our wedding",
     "home.names": "Erik & Karoline",
     "church.title": "Hedvig Eleonora kyrka",
