@@ -30,6 +30,9 @@ const translations = {
     "response.message": "Message",
     "response.message-example": "e.g. Dietary restrictions, allergies, or anything else you'd like us to know.",
     "response.send": "Send answer",
+    "response.thank-you": "Thank you for letting us know.",
+    "response.thank-you-attending": "Thank you! We look forward to seeing you!",
+    "response.change": "Change response",
   },
   sv: {
     "nav.wedding": "Bröllop",
@@ -62,6 +65,9 @@ const translations = {
     "response.message": "Meddelande",
     "response.message-example": "t.ex. Kostrestriktioner, allergier eller annat du vill att vi ska veta.",
     "response.send": "Skicka svar",
+    "response.thank-you": "Tack för att du lät oss veta.",
+    "response.thank-you-attending": "Tack! Vi ser fram emot att träffa dig!",
+    "response.change": "Ändra svar",
   },
 };
 

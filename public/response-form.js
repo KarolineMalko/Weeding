@@ -26,6 +26,9 @@
     });
     toggleFields();
 
+    const thankYou = document.getElementById("thank-you");
+    const changeBtn = document.getElementById("change-response-btn");
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const attendance = form.querySelector('input[name="attendance"]:checked')?.value;
@@ -38,9 +41,22 @@
       if (isYes && guests) body += `\nGuests: ${guests}`;
       if (message) body += `\nMessage: ${message}`;
 
-      alert(isYes ? "Thank you! We look forward to seeing you!" : "Thank you for letting us know.");
       window.location.href = "sms:+46700534084?body=" + encodeURIComponent(body);
+
+      form.hidden = true;
+      if (thankYou) {
+        const msg = thankYou.querySelector(".rsvp-thank-you-msg");
+        if (msg) msg.textContent = (typeof t === "function" ? t(isYes ? "response.thank-you-attending" : "response.thank-you") : (isYes ? "Thank you! We look forward to seeing you!" : "Thank you for letting us know."));
+        thankYou.hidden = false;
+      }
     });
+
+    if (changeBtn) {
+      changeBtn.addEventListener("click", () => {
+        if (thankYou) thankYou.hidden = true;
+        form.hidden = false;
+      });
+    }
   }
 
   if (document.readyState === "loading") {
