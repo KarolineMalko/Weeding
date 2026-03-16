@@ -33,6 +33,7 @@ const translations = {
     "response.thank-you": "Thank you for letting us know.",
     "response.thank-you-attending": "Thank you! We look forward to seeing you!",
     "response.change": "Change response",
+    "response.back-home": "Back to home",
   },
   sv: {
     "nav.wedding": "Bröllop",
@@ -68,6 +69,7 @@ const translations = {
     "response.thank-you": "Tack för att du lät oss veta.",
     "response.thank-you-attending": "Tack! Vi ser fram emot att träffa dig!",
     "response.change": "Ändra svar",
+    "response.back-home": "Tillbaka till startsidan",
   },
 };
 

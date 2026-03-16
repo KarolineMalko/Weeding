@@ -97,8 +97,21 @@
   document.addEventListener("touchstart", onTouchStart, { passive: true });
   document.addEventListener("touchend", onTouchEnd, { passive: true });
 
+  window.addEventListener("wedding:goToPage", (e) => {
+    if (e.detail != null && typeof e.detail.index === "number") {
+      goToPage(e.detail.index);
+    }
+  });
+
   document.addEventListener("click", (e) => {
-    const link = e.target.closest(".navbar a[href]");
+    const navLink = e.target.closest(".navbar a[href]");
+    const goHomeLink = e.target.closest(".wedding-go-home");
+    if (goHomeLink) {
+      e.preventDefault();
+      goToPage(0);
+      return;
+    }
+    const link = navLink;
     if (!link || link.target === "_blank") return;
     const href = link.getAttribute("href");
     if (!href || href.startsWith("http") || href.startsWith("#")) return;
