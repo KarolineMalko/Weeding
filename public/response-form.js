@@ -24,6 +24,9 @@
     attendanceRadios.forEach((radio) => {
       radio.addEventListener("change", toggleFields);
     });
+    if (guestsInput) {
+      guestsInput.addEventListener("input", () => guestsInput.setCustomValidity(""));
+    }
     toggleFields();
     requestAnimationFrame(() => toggleFields());
 
@@ -35,12 +38,35 @@
       const attendance = form.querySelector('input[name="attendance"]:checked')?.value;
       const name = form.querySelector("#rsvp-name")?.value?.trim() || "";
       const message = form.querySelector("#rsvp-message")?.value?.trim() || "";
-      const guests = form.querySelector("#rsvp-guests")?.value?.trim() || "";
+      const guestsInputEl = form.querySelector("#rsvp-guests");
 
       const isYes = attendance === "yes";
+
+      if (isYes && guestsInputEl) {
+        guestsInputEl.setCustomValidity("");
+        const raw = guestsInputEl.value?.trim() ?? "";
+        const n = Number(raw);
+        const ok =
+          raw !== "" &&
+          Number.isFinite(n) &&
+          Number.isInteger(n) &&
+          n >= 1;
+        if (!ok) {
+          guestsInputEl.setCustomValidity(
+            typeof t === "function"
+              ? t("response.guests-invalid")
+              : "Please enter the number of guests (at least 1)."
+          );
+          guestsInputEl.reportValidity();
+          return;
+        }
+      }
+
+      const guests = guestsInputEl?.value?.trim() || "";
+
       let body;
       if (isYes) {
-        body = `RSVP Wedding\nAnswer: Yes\nName: ${name}\nGuests: ${guests || "1"}`;
+        body = `RSVP Wedding\nAnswer: Yes\nName: ${name}\nGuests: ${guests}`;
         if (message) body += `\nMessage: ${message}`;
       } else {
         body = `Name: ${name}\nAnswer: No`;
@@ -63,7 +89,10 @@
         form.hidden = false;
         form.querySelector('input[name="attendance"][value="yes"]').checked = true;
         const gi = form.querySelector("#rsvp-guests");
-        if (gi) gi.value = "1";
+        if (gi) {
+          gi.value = "";
+          gi.setCustomValidity("");
+        }
         toggleFields();
       });
     }
