@@ -497,25 +497,16 @@ body {
   padding-top: 0;
 }
 
-.page-last .content.last-content {
-  padding-top: 88px;
-}
-
 .last-content {
   padding-right: 24px;
   text-align: left;
   align-items: stretch;
   gap: 36px;
-  background-color: #b8b8b8;
-  background-image: url("/public/images/lastPage.png?v=2");
-  background-size: cover;
-  background-position: center 72%;
-  background-repeat: no-repeat;
-  background-origin: content-box;
+  background: url("/public/images/lastPage.png?v=2") center/cover no-repeat;
   color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
   border-radius: 16px;
-  padding: 88px 32px 32px 32px;
+  padding: 32px;
   justify-content: flex-start;
 }
 
