@@ -1,7 +1,8 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last", "/response"];
   const DEBOUNCE_MS = 80;
-  const SWIPE_THRESHOLD = 28;
+  const SWIPE_THRESHOLD = 24;
+  const WHEEL_DELTA_THRESHOLD = 12;
 
   function getCurrentPageIndex() {
     const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
@@ -74,28 +75,99 @@
   function onWheel(e) {
     const now = Date.now();
     if (now - lastWheel < DEBOUNCE_MS) return;
+
+    const absX = Math.abs(e.deltaX);
+    const absY = Math.abs(e.deltaY);
+
+    if (absX > absY && absX >= WHEEL_DELTA_THRESHOLD) {
+      lastWheel = now;
+      if (e.deltaX > 0) handleScrollDown();
+      else if (e.deltaX < 0) handleScrollUp();
+      return;
+    }
+
+    if (absY < WHEEL_DELTA_THRESHOLD) return;
     lastWheel = now;
     if (e.deltaY > 0) handleScrollDown();
     else if (e.deltaY < 0) handleScrollUp();
   }
 
-  let touchStartY = 0;
-  function onTouchStart(e) {
-    touchStartY = e.touches[0].clientY;
-  }
-  function onTouchEnd(e) {
-    const touchEndY = e.changedTouches[0].clientY;
-    const diff = touchStartY - touchEndY;
+  function trySwipe(dx, dy) {
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
     const now = Date.now();
     if (now - lastWheel < DEBOUNCE_MS) return;
-    lastWheel = now;
-    if (diff > SWIPE_THRESHOLD) handleScrollDown();
-    else if (diff < -SWIPE_THRESHOLD) handleScrollUp();
+
+    if (absX > absY && absX > SWIPE_THRESHOLD) {
+      lastWheel = now;
+      if (dx > 0) handleScrollDown();
+      else if (dx < 0) handleScrollUp();
+      return;
+    }
+
+    if (absY >= absX && absY > SWIPE_THRESHOLD) {
+      lastWheel = now;
+      if (dy > SWIPE_THRESHOLD) handleScrollDown();
+      else if (dy < -SWIPE_THRESHOLD) handleScrollUp();
+    }
+  }
+
+  let activePointerId = null;
+  let startX = 0;
+  let startY = 0;
+
+  function onPointerDown(e) {
+    if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+    activePointerId = e.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+  }
+
+  function onPointerUp(e) {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+    trySwipe(startX - e.clientX, startY - e.clientY);
+  }
+
+  function onPointerCancel(e) {
+    if (e.pointerId === activePointerId) activePointerId = null;
+  }
+
+  let touchId = null;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  function onTouchStart(e) {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0];
+    touchId = t.identifier;
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }
+
+  function onTouchEnd(e) {
+    const t = Array.from(e.changedTouches).find((c) => c.identifier === touchId);
+    if (!t) return;
+    touchId = null;
+    trySwipe(touchStartX - t.clientX, touchStartY - t.clientY);
+  }
+
+  function onTouchCancel(e) {
+    if (Array.from(e.changedTouches).some((c) => c.identifier === touchId)) {
+      touchId = null;
+    }
   }
 
   document.addEventListener("wheel", onWheel, { passive: true });
-  document.addEventListener("touchstart", onTouchStart, { passive: true });
-  document.addEventListener("touchend", onTouchEnd, { passive: true });
+
+  if (typeof PointerEvent !== "undefined") {
+    window.addEventListener("pointerdown", onPointerDown, { passive: true, capture: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true, capture: true });
+    window.addEventListener("pointercancel", onPointerCancel, { passive: true, capture: true });
+  }
+  window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
+  window.addEventListener("touchend", onTouchEnd, { passive: true, capture: true });
+  window.addEventListener("touchcancel", onTouchCancel, { passive: true, capture: true });
 
   window.addEventListener("wedding:goToPage", (e) => {
     if (e.detail != null && typeof e.detail.index === "number") {
