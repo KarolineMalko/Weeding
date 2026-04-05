@@ -455,7 +455,7 @@ body {
 .content h1 {
   font-size: 41px;
   margin-bottom: -30px;
-  margin-top: 160px;
+  margin-top: 100px;
   position: relative;
   top: -24px;
   font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
@@ -501,7 +501,7 @@ body {
   padding-right: 24px;
   text-align: left;
   align-items: stretch;
-  gap: 24px;
+  gap: 36px;
   background: url("/public/images/lastPage.png?v=2") center/cover no-repeat;
   color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
@@ -518,7 +518,22 @@ body {
   background: rgba(0, 0, 0, 0.35);
   border-radius: 12px;
   padding: 10px 16px;
-  margin-top: 8px;
+  margin-top: 28px;
+}
+
+.last-honeymoon-poem {
+  margin: 0 0 14px 0;
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
+  font-size: 29px;
+  line-height: 1.12;
+  white-space: pre-line;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+html[lang="en"] .last-honeymoon-poem {
+  font-size: 27px;
 }
 
 .last-dresscode-heading {
@@ -544,7 +559,7 @@ html[lang="sv"] .last-dresscode-heading .last-dresscode-desc {
   background: rgba(0, 0, 0, 0.35);
   border-radius: 12px;
   padding: 16px 24px;
-  margin-top: auto;
+  margin-top: -4px;
 }
 
 .last-spacer .subtitle {
