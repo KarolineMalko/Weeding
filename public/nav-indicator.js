@@ -1,10 +1,10 @@
 (function () {
   const PAGE_SELECTORS = {
-    "page-home": ".brand",
-    "page-church": ".navbar .nav-link:nth-of-type(2)",
-    "page-venue": ".navbar .nav-link:nth-of-type(3)",
-    "page-last": ".navbar .nav-link:nth-of-type(4)",
-    "page-response": ".navbar .nav-link:nth-of-type(5)",
+    "page-home": ".navbar .brand",
+    "page-church": '.navbar a.nav-link[href*="church"]',
+    "page-venue": '.navbar a.nav-link[href*="venue"]',
+    "page-last": '.navbar a.nav-link[href*="last"]',
+    "page-response": '.navbar a.nav-link[href*="response"]',
   };
 
   function updateIndicator(animateFromStored) {
@@ -86,4 +86,8 @@
   }
 
   window.addEventListener("wedding:pagechange", () => updateIndicator(true));
+
+  window.__weddingUpdateNavIndicator = function (animateFromStored) {
+    updateIndicator(animateFromStored === true);
+  };
 })();

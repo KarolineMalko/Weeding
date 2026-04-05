@@ -84,6 +84,13 @@ function setLang(lang) {
   document.documentElement.lang = lang;
   applyTranslations();
   updateLangDropdown();
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (typeof window.__weddingUpdateNavIndicator === "function") {
+        window.__weddingUpdateNavIndicator(false);
+      }
+    });
+  });
 }
 
 function t(key) {
