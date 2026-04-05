@@ -16,7 +16,7 @@ const translations = {
     "venue.address": "Segersbyvägen 7, Norsborg",
     "photo.title": "Share your photos",
     "photo.scan": "Scan the QR code to upload",
-    "last.honeymoon-poem": "No need for gifts, don't stress or dash.\nThe easiest thing… just honeymoon cash.",
+    "last.honeymoon-poem": "No need for gifts, don't stress or dash.\nThe easiest thing…\njust honeymoon cash.",
     "last.dresscode": "Dress Code:",
     "last.dresscode-desc": "Semi-formal",
     "last.rsvp": "RSVP by:",
