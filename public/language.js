@@ -13,7 +13,7 @@ const translations = {
     "church.address": "Storgatan 2, Stockholm",
     "venue.title": "Cello Slottet",
     "venue.time": "18:00",
-    "venue.address": "Segersbyvägen 7, 145 63 Norsborg",
+    "venue.address": "Segersbyvägen 7, Norsborg",
     "photo.title": "Share your photos",
     "photo.scan": "Scan the QR code to upload",
     "last.dresscode": "Dress Code:",
@@ -48,8 +48,8 @@ const translations = {
     "church.time": "kl. 16:00",
     "church.address": "Storgatan 2, Stockholm",
     "venue.title": "Cello Slottet",
-    "venue.time": "18:00",
-    "venue.address": "Segersbyvägen 7, 145 63 Norsborg",
+    "venue.time": "kl. 18:00",
+    "venue.address": "Segersbyvägen 7, Norsborg",
     "photo.title": "Dela dina foton",
     "photo.scan": "Skanna QR-koden för att ladda upp",
     "last.dresscode": "Klädsel:",
@@ -93,7 +93,7 @@ function applyTranslations() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
     const text = t(key);
-    if (text) el.textContent = text;
+    el.textContent = text;
   });
 }
 
