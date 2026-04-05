@@ -234,21 +234,31 @@ body {
     ),
     url("/public/images/HomeMobil.png?v=2") center/cover no-repeat;
   color: #f7f4f0;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  padding-top: 18vh;
 }
 
 .page-home .home-hero {
-  margin-top: 120px;
-  align-self: flex-end;
+  margin-top: 0;
+  align-self: center;
   text-align: center;
   display: inline-block;
 }
 
 .page-home .content h1 {
   font-size: 70px;
+  white-space: pre-line;
+  line-height: 1.05;
+  margin-bottom: 0;
+  margin-top: 0;
+  top: 0;
 }
 
-.page-home .subtitle {
-  font-size: 34px;
+.page-home .home-hero .subtitle {
+  font-size: 40px;
+  margin-top: 32px;
 }
 
 .page-church .content {
@@ -360,12 +370,12 @@ body {
   color: rgba(247, 244, 240, 0.95);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
   line-height: 1;
-  margin: 0 0 12px 0;
+  margin: 0 0 0 0;
 }
 
 .church-quote-line {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  font-family: "Dancing Script", "Georgia", cursive;
+  font-size: 27px;
   line-height: 1.6;
   color: rgba(247, 244, 240, 0.95);
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
@@ -757,24 +767,25 @@ body {
     font-size: 20px;
   }
 
-  .page-home .home-hero {
-    margin-top: -120px;
+  .page-home .content {
+    padding-top: 14vh;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.25),
+        rgba(0, 0, 0, 0.25)
+      ),
+      url("/public/images/HomeMobil.png?v=2") center/cover no-repeat;
   }
 
   .page-home .content h1 {
     font-size: 54px;
   }
 
-  .page-home .subtitle {
-    font-size: 26px;
-  }
-
-  .page-home .content {
-    background: linear-gradient(
-        rgba(0, 0, 0, 0.25),
-        rgba(0, 0, 0, 0.25)
-      ),
-      url("/public/images/HomeMobil.png?v=2") center/cover no-repeat;
+  .page-home .home-hero .subtitle {
+    font-size: 30px;
+    margin-top: 28px;
   }
 
   .page-church .content {
@@ -862,7 +873,8 @@ body {
     font-size: 46px;
   }
 
-  .page-home .subtitle {
-    font-size: 22px;
+  .page-home .home-hero .subtitle {
+    font-size: 26px;
+    margin-top: 28px;
   }
 }
