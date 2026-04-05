@@ -515,7 +515,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgb(132 77 6 / 35%);
   border-radius: 12px;
   padding: 10px 16px;
   margin-top: 28px;
@@ -545,18 +545,18 @@ html[lang="en"] .last-honeymoon-poem {
 }
 
 .last-dresscode-heading .last-dresscode-desc {
-  font-size: 0.68em;
+  font-size: 30px;
   font-weight: 500;
 }
 
-html[lang="sv"] .last-dresscode-heading .last-dresscode-desc {
-  font-size: 0.75em;
+.last-hero .last-dresscode-heading {
+  transform: translateY(15px);
 }
 
 .last-spacer {
   min-height: 24px;
   flex-shrink: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgb(132 77 6 / 35%);
   border-radius: 12px;
   padding: 16px 24px;
   margin-top: -4px;
@@ -565,9 +565,6 @@ html[lang="sv"] .last-dresscode-heading .last-dresscode-desc {
 .last-spacer .subtitle {
   margin: 0;
   font-size: 20px;
-}
-
-html[lang="sv"] .last-spacer .subtitle {
   font-family: Georgia, "Times New Roman", serif;
 }
 
@@ -591,17 +588,13 @@ html[lang="sv"] .last-spacer .subtitle {
 }
 
 .last-rsvp-heading .last-rsvp-date {
-  font-size: 0.68em;
+  font-size: 30px;
   font-weight: 500;
-}
-
-html[lang="sv"] .last-rsvp-heading .last-rsvp-date {
-  font-size: 0.78em;
 }
 
 .last-section {
   padding: 10px 8px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgb(132 77 6 / 35%);
   border-radius: 12px;
 }
 
