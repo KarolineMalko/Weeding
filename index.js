@@ -171,6 +171,24 @@ const server = http.createServer((req, res) => {
   }
 
   let page = routes[urlPath];
+  if (!page) {
+    const guestPath = /^\/response\/(\d+)$/.exec(urlPath);
+    if (guestPath) {
+      const n = Number(guestPath[1], 10);
+      if (Number.isInteger(n) && n >= 1 && n <= 99) {
+        page = "response.html";
+      }
+    }
+    if (!page) {
+      const rootGuest = /^\/(\d+)$/.exec(urlPath);
+      if (rootGuest) {
+        const n = Number(rootGuest[1], 10);
+        if (Number.isInteger(n) && n >= 1 && n <= 99) {
+          page = "home.html";
+        }
+      }
+    }
+  }
   let htmlPath;
 
   if (page) {

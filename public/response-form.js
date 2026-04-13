@@ -1,5 +1,69 @@
 (function () {
+  const GUEST_RANGE = { min: 1, max: 99 };
+  const GUEST_DEFAULT_STORAGE = "wedding-default-guests";
+
+  (function applyRootGuestPath() {
+    const pathname = (window.location.pathname || "/").replace(/\/$/, "") || "/";
+    const rootMatch = /^\/(\d+)$/.exec(pathname);
+    if (!rootMatch) return;
+    const n = Number(rootMatch[1], 10);
+    if (
+      !Number.isInteger(n) ||
+      n < GUEST_RANGE.min ||
+      n > GUEST_RANGE.max
+    ) {
+      return;
+    }
+    try {
+      sessionStorage.setItem(GUEST_DEFAULT_STORAGE, String(n));
+    } catch (_) {}
+    try {
+      history.replaceState(null, "", "/");
+    } catch (_) {}
+  })();
+
+  function parseDefaultGuestCount() {
+    const pathname = (window.location.pathname || "/").replace(/\/$/, "") || "/";
+    const pathMatch = /^\/response\/(\d+)$/.exec(pathname);
+    if (pathMatch) {
+      const n = Number(pathMatch[1], 10);
+      if (
+        Number.isInteger(n) &&
+        n >= GUEST_RANGE.min &&
+        n <= GUEST_RANGE.max
+      ) {
+        return n;
+      }
+    }
+    try {
+      const stored = sessionStorage.getItem(GUEST_DEFAULT_STORAGE);
+      if (stored != null && stored !== "") {
+        const n = Number(stored, 10);
+        if (
+          Number.isInteger(n) &&
+          n >= GUEST_RANGE.min &&
+          n <= GUEST_RANGE.max
+        ) {
+          return n;
+        }
+      }
+    } catch (_) {}
+    const q = new URLSearchParams(window.location.search).get("guests");
+    if (q != null && q !== "") {
+      const n = Number(q, 10);
+      if (
+        Number.isInteger(n) &&
+        n >= GUEST_RANGE.min &&
+        n <= GUEST_RANGE.max
+      ) {
+        return n;
+      }
+    }
+    return null;
+  }
+
   function init() {
+    const urlDefaultGuests = parseDefaultGuestCount();
     const form = document.getElementById("rsvp-form");
     const formFields = document.getElementById("form-fields");
     const guestsField = document.getElementById("guests-field");
@@ -22,6 +86,11 @@
           guestsInput.removeAttribute("required");
           guestsInput.value = "";
           guestsInput.setCustomValidity("");
+        } else if (
+          urlDefaultGuests != null &&
+          !String(guestsInput.value ?? "").trim()
+        ) {
+          guestsInput.value = String(urlDefaultGuests);
         }
       }
       if (nameInput) {

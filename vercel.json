@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/:guests(\\d+)", "destination": "/index.html" },
     { "source": "/church", "destination": "/church.html" },
     { "source": "/venue", "destination": "/venue.html" },
     { "source": "/last", "destination": "/last.html" },

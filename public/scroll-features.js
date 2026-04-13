@@ -1,9 +1,15 @@
 (function () {
   const PAGES = ["/", "/church", "/venue", "/last", "/response"];
 
+  function normalizePagePath(path) {
+    const p = (path || "/").replace(/\/$/, "") || "/";
+    if (/^\/response\/\d+$/.test(p)) return "/response";
+    if (/^\/\d+$/.test(p)) return "/";
+    return p === "" ? "/" : p;
+  }
+
   function getPageIndex() {
-    const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
-    const normalized = path === "" ? "/" : path;
+    const normalized = normalizePagePath(window.location.pathname);
     const idx = PAGES.indexOf(normalized);
     return idx >= 0 ? idx : 0;
   }

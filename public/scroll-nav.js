@@ -4,9 +4,15 @@
   const SWIPE_THRESHOLD = 24;
   const WHEEL_DELTA_THRESHOLD = 12;
 
+  function normalizePagePath(path) {
+    const p = (path || "/").replace(/\/$/, "") || "/";
+    if (/^\/response\/\d+$/.test(p)) return "/response";
+    if (/^\/\d+$/.test(p)) return "/";
+    return p === "" ? "/" : p;
+  }
+
   function getCurrentPageIndex() {
-    const path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
-    const normalized = path === "" ? "/" : path;
+    const normalized = normalizePagePath(window.location.pathname);
     const idx = PAGES.indexOf(normalized);
     return idx >= 0 ? idx : 0;
   }
@@ -54,7 +60,28 @@
 
       document.querySelectorAll("video[autoplay]").forEach((v) => v.play().catch(() => {}));
 
-      history.replaceState(null, "", path === "/" ? "/" : path);
+      let displayPath = path === "/" ? "/" : path;
+      if (displayPath === "/response") {
+        const p = (window.location.pathname || "/").replace(/\/$/, "") || "/";
+        const rm = /^\/response\/(\d+)$/.exec(p);
+        if (rm) {
+          const n = Number(rm[1], 10);
+          if (Number.isInteger(n) && n >= 1 && n <= 99) {
+            displayPath = `/response/${n}`;
+          }
+        } else {
+          try {
+            const s = sessionStorage.getItem("wedding-default-guests");
+            if (s != null && s !== "") {
+              const n = Number(s, 10);
+              if (Number.isInteger(n) && n >= 1 && n <= 99) {
+                displayPath = `/response/${n}`;
+              }
+            }
+          } catch (_) {}
+        }
+      }
+      history.replaceState(null, "", displayPath);
       window.dispatchEvent(new CustomEvent("wedding:pagechange"));
     } catch (_) {
       window.location.replace(path === "/" ? "/" : path);
@@ -187,7 +214,9 @@
     if (!link || link.target === "_blank") return;
     const href = link.getAttribute("href");
     if (!href || href.startsWith("http") || href.startsWith("#")) return;
-    const path = href === "index.html" ? "/" : (href.startsWith("/") ? href : "/" + href.replace(".html", ""));
+    let path = href === "index.html" ? "/" : (href.startsWith("/") ? href : "/" + href.replace(".html", ""));
+    if (/^\/response\/\d+$/.test(path)) path = "/response";
+    if (/^\/\d+$/.test(path)) path = "/";
     if (PAGES.includes(path)) {
       e.preventDefault();
       storePosition();
