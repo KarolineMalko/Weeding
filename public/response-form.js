@@ -63,7 +63,6 @@
   }
 
   function init() {
-    const urlDefaultGuests = parseDefaultGuestCount();
     const form = document.getElementById("rsvp-form");
     const formFields = document.getElementById("form-fields");
     const guestsField = document.getElementById("guests-field");
@@ -74,8 +73,9 @@
 
     if (!form || !formFields || !attendanceRadios?.length) return;
 
+    /** Always read fresh (path/session/query) so cap is never stale after navigation. */
     function guestCap() {
-      return urlDefaultGuests != null ? urlDefaultGuests : GUEST_RANGE.max;
+      return parseDefaultGuestCount() ?? GUEST_RANGE.max;
     }
 
     function applyGuestInputLimits() {
@@ -89,13 +89,38 @@
       if (!guestsInput) return;
       const raw = String(guestsInput.value ?? "").trim();
       if (raw === "") return;
-      const n = Number(raw, 10);
+      const n = parseInt(raw, 10);
       if (!Number.isFinite(n)) return;
       const cap = guestCap();
       let next = n;
       if (next > cap) next = cap;
       if (next < GUEST_RANGE.min) next = GUEST_RANGE.min;
       if (next !== n) guestsInput.value = String(next);
+    }
+
+    /** Invite links: empty field snaps back to the allowed count (mobile often skips input events). */
+    function normalizeGuestsOnBlur() {
+      if (!guestsInput) return;
+      applyGuestInputLimits();
+      const invite = parseDefaultGuestCount();
+      const raw = String(guestsInput.value ?? "").trim();
+      if (raw === "" && invite != null) {
+        guestsInput.value = String(invite);
+        guestsInput.setCustomValidity("");
+        return;
+      }
+      clampGuestsValue();
+    }
+
+    function syncGuestsBeforeSubmit() {
+      if (!guestsInput) return;
+      applyGuestInputLimits();
+      const invite = parseDefaultGuestCount();
+      const raw = String(guestsInput.value ?? "").trim();
+      if (raw === "" && invite != null) {
+        guestsInput.value = String(invite);
+      }
+      clampGuestsValue();
     }
 
     function toggleFields() {
@@ -112,11 +137,9 @@
           guestsInput.setCustomValidity("");
         } else {
           applyGuestInputLimits();
-          if (
-            urlDefaultGuests != null &&
-            !String(guestsInput.value ?? "").trim()
-          ) {
-            guestsInput.value = String(urlDefaultGuests);
+          const invite = parseDefaultGuestCount();
+          if (invite != null && !String(guestsInput.value ?? "").trim()) {
+            guestsInput.value = String(invite);
           }
           clampGuestsValue();
         }
@@ -135,10 +158,13 @@
       });
 
       if (guestsInput) {
-        guestsInput.addEventListener("input", () => {
+        const onGuestsInteraction = () => {
           clampGuestsValue();
           guestsInput.setCustomValidity("");
-        });
+        };
+        guestsInput.addEventListener("input", onGuestsInteraction);
+        guestsInput.addEventListener("change", onGuestsInteraction);
+        guestsInput.addEventListener("blur", normalizeGuestsOnBlur);
       }
 
       const thankYou = document.getElementById("thank-you");
@@ -216,13 +242,14 @@
 
         if (isYes) {
           if (guestsInput) guestsInput.setCustomValidity("");
+          syncGuestsBeforeSubmit();
           const raw = guestsInput?.value?.trim() ?? "";
-          const n = Number(raw);
+          const n = parseInt(raw, 10);
           const cap = guestCap();
           const ok =
             raw !== "" &&
+            /^\d+$/.test(raw) &&
             Number.isFinite(n) &&
-            Number.isInteger(n) &&
             n >= GUEST_RANGE.min &&
             n <= cap;
           if (!ok) {
