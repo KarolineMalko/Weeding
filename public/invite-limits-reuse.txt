@@ -1,0 +1,28 @@
+invite-limits.json — reuse notes
+================================
+
+This file is NOT used by the current RSVP page or server. It is kept so you can
+turn per-invite guest caps back on later without retyping names and limits.
+
+Schema
+------
+  defaultMax   — integer; max guests when the invite code field is left blank.
+  byCode       — object: "CODE" (any case when typed) → max guests for that invite.
+
+Example: "KAROLINE": 3 means someone who enters code KAROLINE may RSVP for up to 3 people.
+
+What you would wire up again (conceptually)
+-------------------------------------------
+  • Client: fetch this JSON, show an “invitation code” field, cap the guest count
+    dropdown/input using defaultMax or byCode[code], optional ?invite=CODE in the URL.
+  • Server: rsvp-validate.js should read the same JSON and reject invalid counts/codes
+    so the limit cannot be bypassed.
+
+Finding the old implementation
+------------------------------
+  Use git history on this repo: search commits that touched
+  public/response-form.js, rsvp-validate.js, and pages/response.html for the version
+  that referenced invite-limits.json and invitation codes.
+
+You can edit invite-limits.json anytime; unused keys do not affect the live site
+until you plug the logic back in.

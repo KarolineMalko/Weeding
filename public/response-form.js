@@ -15,87 +15,182 @@
       formFields.hidden = false;
       if (guestsField) guestsField.hidden = !isYes;
       if (messageExample) messageExample.hidden = !isYes;
+
       if (guestsInput) {
         guestsInput.required = isYes;
-        if (!isYes) guestsInput.removeAttribute("required");
+        if (!isYes) {
+          guestsInput.removeAttribute("required");
+          guestsInput.value = "";
+          guestsInput.setCustomValidity("");
+        }
+      }
+      if (nameInput) {
+        nameInput.required = true;
+        if (!isYes) nameInput.setCustomValidity("");
       }
     }
 
-    attendanceRadios.forEach((radio) => {
-      radio.addEventListener("change", toggleFields);
-    });
-    if (guestsInput) {
-      guestsInput.addEventListener("input", () => guestsInput.setCustomValidity(""));
-    }
-    toggleFields();
-    requestAnimationFrame(() => toggleFields());
+    if (!form.dataset.rsvpBound) {
+      form.dataset.rsvpBound = "1";
 
-    const thankYou = document.getElementById("thank-you");
-    const changeBtn = document.getElementById("change-response-btn");
+      attendanceRadios.forEach((radio) => {
+        radio.addEventListener("change", toggleFields);
+      });
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const attendance = form.querySelector('input[name="attendance"]:checked')?.value;
-      const name = form.querySelector("#rsvp-name")?.value?.trim() || "";
-      const message = form.querySelector("#rsvp-message")?.value?.trim() || "";
-      const guestsInputEl = form.querySelector("#rsvp-guests");
+      if (guestsInput) {
+        guestsInput.addEventListener("input", () => guestsInput.setCustomValidity(""));
+      }
 
-      const isYes = attendance === "yes";
+      const thankYou = document.getElementById("thank-you");
+      const changeBtn = document.getElementById("change-response-btn");
 
-      if (isYes && guestsInputEl) {
-        guestsInputEl.setCustomValidity("");
-        const raw = guestsInputEl.value?.trim() ?? "";
-        const n = Number(raw);
-        const ok =
-          raw !== "" &&
-          Number.isFinite(n) &&
-          Number.isInteger(n) &&
-          n >= 1;
-        if (!ok) {
-          guestsInputEl.setCustomValidity(
-            typeof t === "function"
-              ? t("response.guests-invalid")
-              : "Please enter the number of guests (at least 1)."
-          );
-          guestsInputEl.reportValidity();
+      async function submitRsvpApi(payload) {
+        const errBox = document.getElementById("rsvp-submit-error");
+        try {
+          const res = await fetch("/api/rsvp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            const msg = data.error || "Could not save. Try again.";
+            if (errBox) {
+              errBox.textContent = msg;
+              errBox.hidden = false;
+            } else {
+              alert(msg);
+            }
+            return false;
+          }
+          if (errBox) {
+            errBox.textContent = "";
+            errBox.hidden = true;
+          }
+          return true;
+        } catch {
+          const msg = "Network error. Check your connection and try again.";
+          if (errBox) {
+            errBox.textContent = msg;
+            errBox.hidden = false;
+          } else {
+            alert(msg);
+          }
+          return false;
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const errBox = document.getElementById("rsvp-submit-error");
+        if (errBox) {
+          errBox.textContent = "";
+          errBox.hidden = true;
+        }
+
+        const attendance = form.querySelector('input[name="attendance"]:checked')?.value;
+        const message = form.querySelector("#rsvp-message")?.value?.trim() || "";
+        const name = form.querySelector("#rsvp-name")?.value?.trim() || "";
+        const isYes = attendance === "yes";
+
+        if (!name) {
+          if (nameInput) {
+            nameInput.setCustomValidity(
+              typeof t === "function"
+                ? t("response.name-required")
+                : "Please enter your name."
+            );
+            nameInput.reportValidity();
+          }
           return;
         }
-      }
+        if (nameInput) nameInput.setCustomValidity("");
 
-      const guests = guestsInputEl?.value?.trim() || "";
+        if (isYes) {
+          if (guestsInput) guestsInput.setCustomValidity("");
+          const raw = guestsInput?.value?.trim() ?? "";
+          const n = Number(raw);
+          const ok =
+            raw !== "" &&
+            Number.isFinite(n) &&
+            Number.isInteger(n) &&
+            n >= 1;
+          if (!ok) {
+            if (guestsInput) {
+              guestsInput.setCustomValidity(
+                typeof t === "function"
+                  ? t("response.guests-invalid")
+                  : "Please enter the number of guests (at least 1)."
+              );
+              guestsInput.reportValidity();
+            }
+            return;
+          }
 
-      let body;
-      if (isYes) {
-        body = `RSVP Wedding\nAnswer: Yes\nName: ${name}\nGuests: ${guests}`;
-        if (message) body += `\nMessage: ${message}`;
-      } else {
-        body = `Name: ${name}\nAnswer: No`;
-        if (message) body += `\nMessage: ${message}`;
-      }
+          const saved = await submitRsvpApi({
+            attending: "yes",
+            name,
+            guestCount: n,
+            message,
+          });
+          if (!saved) return;
 
-      window.location.href = "sms:+46700534084?body=" + encodeURIComponent(body);
-
-      form.hidden = true;
-      if (thankYou) {
-        const msg = thankYou.querySelector(".rsvp-thank-you-msg");
-        if (msg) msg.textContent = (typeof t === "function" ? t(isYes ? "response.thank-you-attending" : "response.thank-you") : (isYes ? "Thank you! We look forward to seeing you!" : "Thank you for letting us know."));
-        thankYou.hidden = false;
-      }
-    });
-
-    if (changeBtn) {
-      changeBtn.addEventListener("click", () => {
-        if (thankYou) thankYou.hidden = true;
-        form.hidden = false;
-        form.querySelector('input[name="attendance"][value="yes"]').checked = true;
-        const gi = form.querySelector("#rsvp-guests");
-        if (gi) {
-          gi.value = "";
-          gi.setCustomValidity("");
+          form.hidden = true;
+          if (thankYou) {
+            const thankMsg = thankYou.querySelector(".rsvp-thank-you-msg");
+            if (thankMsg) {
+              thankMsg.textContent =
+                typeof t === "function"
+                  ? t("response.thank-you-attending")
+                  : "Thank you! We look forward to seeing you!";
+            }
+            thankYou.hidden = false;
+          }
+          return;
         }
-        toggleFields();
+
+        const saved = await submitRsvpApi({
+          attending: "no",
+          name,
+          message,
+        });
+        if (!saved) return;
+
+        form.hidden = true;
+        if (thankYou) {
+          const thankMsg = thankYou.querySelector(".rsvp-thank-you-msg");
+          if (thankMsg) {
+            thankMsg.textContent =
+              typeof t === "function" ? t("response.thank-you") : "Thank you for letting us know.";
+          }
+          thankYou.hidden = false;
+        }
       });
+
+      if (changeBtn) {
+        changeBtn.addEventListener("click", () => {
+          if (thankYou) thankYou.hidden = true;
+          form.hidden = false;
+          form.querySelector('input[name="attendance"][value="yes"]').checked = true;
+          if (nameInput) {
+            nameInput.value = "";
+            nameInput.setCustomValidity("");
+          }
+          if (guestsInput) {
+            guestsInput.value = "";
+            guestsInput.setCustomValidity("");
+          }
+          toggleFields();
+        });
+      }
+
+      if (nameInput) {
+        nameInput.addEventListener("input", () => nameInput.setCustomValidity(""));
+      }
     }
+
+    toggleFields();
+    requestAnimationFrame(() => toggleFields());
   }
 
   if (document.readyState === "loading") {

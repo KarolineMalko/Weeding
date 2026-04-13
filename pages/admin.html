@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>RSVP admin - Wedding</title>
+    <link rel="stylesheet" href="/public/styles.css?v=2" />
+  </head>
+  <body class="page-admin">
+    <main class="content admin-content">
+      <section class="admin-panel">
+        <h1>RSVP responses</h1>
+        <p class="admin-lead">
+          Enter the same secret token you set as <code>WEDDING_ADMIN_TOKEN</code> on the server. Do not share this page or the token.
+        </p>
+        <div class="admin-login-row">
+          <label for="admin-token">Admin token</label>
+          <input type="password" id="admin-token" autocomplete="off" class="admin-token-input" />
+          <button type="button" class="admin-load-btn" id="admin-load-btn">Load responses</button>
+        </div>
+        <p class="admin-form-error" id="admin-error" hidden role="alert"></p>
+        <div class="admin-table-wrap" id="admin-table-wrap" hidden>
+          <table class="admin-table" id="admin-table">
+            <thead>
+              <tr>
+                <th>When (UTC)</th>
+                <th>Attending</th>
+                <th>Code</th>
+                <th>Name / names</th>
+                <th>#</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody id="admin-tbody"></tbody>
+          </table>
+          <p class="admin-summary" id="admin-summary"></p>
+        </div>
+      </section>
+    </main>
+    <script src="/public/admin-page.js"></script>
+  </body>
+</html>

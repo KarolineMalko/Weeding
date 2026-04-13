@@ -1,6 +1,8 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { insertRsvp, listRsvps } = require("./rsvp-db");
+const { validateAndNormalize } = require("./rsvp-validate");
 
 const PORT = process.env.PORT || 3000;
 const HOST = "127.0.0.1";
@@ -14,11 +16,97 @@ const routes = {
   // "/photo": "photo.html", // commented out
   "/last": "last.html",
   "/response": "response.html",
+  "/admin": "admin.html",
 };
 
 const clients = new Set();
 
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      try {
+        const raw = Buffer.concat(chunks).toString("utf8");
+        if (!raw.trim()) {
+          resolve({});
+          return;
+        }
+        resolve(JSON.parse(raw));
+      } catch (e) {
+        reject(e);
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
 const server = http.createServer((req, res) => {
+  const reqUrl = req.url || "/";
+  let pathname;
+  try {
+    pathname = new URL(reqUrl, `http://${HOST}`).pathname;
+  } catch {
+    pathname = "/";
+  }
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    pathname = pathname.slice(0, -1);
+  }
+
+  if (pathname === "/api/rsvp" && req.method === "POST") {
+    readJsonBody(req)
+      .then((body) => {
+        const v = validateAndNormalize(body);
+        if (!v.ok) {
+          res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: v.error }));
+          return;
+        }
+        try {
+          insertRsvp(v.row);
+        } catch (err) {
+          console.error(err);
+          res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "Server error" }));
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ ok: true }));
+      })
+      .catch(() => {
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Invalid JSON" }));
+      });
+    return;
+  }
+
+  if (pathname === "/api/admin/rsvps" && req.method === "GET") {
+    const adminToken = process.env.WEDDING_ADMIN_TOKEN;
+    if (!adminToken) {
+      res.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Admin token not configured on server" }));
+      return;
+    }
+    const auth = req.headers.authorization || "";
+    const match = /^Bearer\s+(.+)$/i.exec(auth);
+    const got = match ? match[1].trim() : "";
+    if (got !== adminToken) {
+      res.writeHead(401, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Unauthorized" }));
+      return;
+    }
+    try {
+      const rows = listRsvps();
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ rows }));
+    } catch (err) {
+      console.error(err);
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Server error" }));
+    }
+    return;
+  }
+
   if (req.url === "/__reload") {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
@@ -31,7 +119,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  let urlPath = (req.url || "/").split("?")[0];
+  let urlPath = reqUrl.split("?")[0];
   if (urlPath.length > 1 && urlPath.endsWith("/")) {
     urlPath = urlPath.slice(0, -1);
   }
@@ -57,6 +145,8 @@ const server = http.createServer((req, res) => {
           ? "text/css; charset=utf-8"
           : ext === ".js"
             ? "application/javascript; charset=utf-8"
+            : ext === ".json"
+              ? "application/json; charset=utf-8"
             : ext === ".ttf"
               ? "font/ttf"
               : ext === ".webp"
@@ -106,9 +196,27 @@ const server = http.createServer((req, res) => {
   }
 });
 
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(
+      `\nPort ${PORT} is already in use.\n` +
+        `  • Stop the other server (Ctrl+C in that terminal), or\n` +
+        `  • Free the port:     kill $(lsof -t -i :${PORT})\n` +
+        `  • Or use another port:  PORT=3001 npm start\n`
+    );
+    process.exit(1);
+  }
+  throw err;
+});
+
 server.listen(PORT, HOST, () => {
   const address = server.address();
   console.log(`Server running at http://${HOST}:${address.port}/`);
+  if (!process.env.WEDDING_ADMIN_TOKEN) {
+    console.warn(
+      "[RSVP] Set env WEDDING_ADMIN_TOKEN to use /admin (RSVP database is still saved for POST /api/rsvp)."
+    );
+  }
 });
 
 const watchPaths = [pagesDir, publicDir];

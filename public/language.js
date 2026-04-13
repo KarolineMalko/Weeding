@@ -27,6 +27,7 @@ const translations = {
     "response.can-come": "I can come 🤩❤️",
     "response.cannot-come": "I can not come 😢💔",
     "response.name": "Name",
+    "response.name-required": "Please enter your name.",
     "response.guests": "Number of guests",
     "response.guests-invalid": "Please enter the number of guests (at least 1).",
     "response.message": "Message",
@@ -65,6 +66,7 @@ const translations = {
     "response.can-come": "Jag kan komma 🤩❤️",
     "response.cannot-come": "Jag kan inte komma 😢💔",
     "response.name": "Namn",
+    "response.name-required": "Ange ditt namn.",
     "response.guests": "Antal gäster",
     "response.guests-invalid": "Ange antal gäster (minst 1).",
     "response.message": "Meddelande",
@@ -85,6 +87,7 @@ function setLang(lang) {
   localStorage.setItem("wedding-lang", lang);
   document.documentElement.lang = lang;
   applyTranslations();
+  window.dispatchEvent(new Event("wedding:langchange"));
   updateLangDropdown();
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {

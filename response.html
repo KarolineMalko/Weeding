@@ -44,11 +44,20 @@
           <div class="rsvp-form-fields" id="form-fields">
             <div class="form-group">
               <label for="rsvp-name" data-i18n="response.name">Name</label>
-              <input type="text" id="rsvp-name" name="name" required placeholder="" />
+              <input type="text" id="rsvp-name" name="name" required autocomplete="name" placeholder="" />
             </div>
             <div class="form-group rsvp-guests-field" id="guests-field" hidden>
               <label for="rsvp-guests" data-i18n="response.guests">Number of guests</label>
-              <input type="number" id="rsvp-guests" name="guests" min="1" step="1" inputmode="numeric" placeholder="0" />
+              <input
+                type="number"
+                id="rsvp-guests"
+                name="guests"
+                min="1"
+                max="99"
+                step="1"
+                inputmode="numeric"
+                placeholder=""
+              />
             </div>
             <div class="form-group">
               <label for="rsvp-message" data-i18n="response.message">Message</label>
@@ -56,6 +65,7 @@
               <p class="message-example" id="message-example" data-i18n="response.message-example">e.g. Dietary restrictions, allergies, or anything else you'd like us to know.</p>
             </div>
           </div>
+          <p class="rsvp-form-error" id="rsvp-submit-error" hidden role="alert"></p>
           <button type="submit" class="rsvp-submit" data-i18n="response.send">Send answer</button>
         </form>
       </section>
