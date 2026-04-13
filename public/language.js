@@ -32,6 +32,11 @@ const translations = {
     "response.name": "Name",
     "response.name-required": "Please enter your name.",
     "response.guests": "Number of guests",
+    "response.guest-names-section": "Guest names",
+    "response.guest-label": "Guest {n}",
+    "response.guest-names-hint":
+      "One field per person—the number of fields matches “Number of guests”.",
+    "response.guest-names-incomplete": "Please enter a name for each guest.",
     "response.guests-invalid": "Please enter the number of guests (at least 1).",
     "response.guests-cap-hint":
       "Your invite is for up to {max} guests—you can lower the number, not raise it.",
@@ -76,6 +81,11 @@ const translations = {
     "response.name": "Namn",
     "response.name-required": "Ange ditt namn.",
     "response.guests": "Antal gäster",
+    "response.guest-names-section": "Gästers namn",
+    "response.guest-label": "Gäst {n}",
+    "response.guest-names-hint":
+      "Ett fält per person—antalet fält följer “Antal gäster”.",
+    "response.guest-names-incomplete": "Ange namn för varje gäst.",
     "response.guests-invalid": "Ange antal gäster (minst 1).",
     "response.guests-cap-hint":
       "Din inbjudan gäller högst {max} gäster—du kan sänka antalet, inte höja det.",

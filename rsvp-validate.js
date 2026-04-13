@@ -1,9 +1,9 @@
 /**
- * Server-side validation for simplified RSVP: name + guest count (yes) or name (no).
- * No invitation codes or per-guest name fields.
+ * Server-side validation for RSVP: guest list array (yes) or decline name (no).
  */
 
 const MAX_GUESTS = 99;
+const MAX_GUEST_NAME_PART_LEN = 120;
 
 /**
  * @returns {{ ok: true, row: object } | { ok: false, error: string }}
@@ -58,6 +58,14 @@ function validateAndNormalize(body) {
     return { ok: false, error: "Invalid number of guests" };
   }
 
+  let guestNamesArr = normalizeGuestNameList(body.guestNameList, n);
+  if (!guestNamesArr) {
+    guestNamesArr = legacyGuestNamesFromBody(body, name, n);
+  }
+  if (!guestNamesArr) {
+    return { ok: false, error: "Invalid or incomplete guest names" };
+  }
+
   return {
     ok: true,
     row: {
@@ -65,10 +73,46 @@ function validateAndNormalize(body) {
       invite_code: null,
       decline_name: null,
       attendee_count: n,
-      guest_names: JSON.stringify([name]),
+      guest_names: JSON.stringify(guestNamesArr),
       message: message || null,
     },
   };
+}
+
+function normalizeGuestNameList(list, n) {
+  if (!Array.isArray(list) || list.length !== n) return null;
+  const cleaned = list.map((x) =>
+    typeof x === "string" ? x.trim().slice(0, MAX_GUEST_NAME_PART_LEN) : ""
+  );
+  if (cleaned.length !== n || cleaned.some((x) => !x)) return null;
+  return cleaned;
+}
+
+/** Older clients: single textarea `guestNames` or n === 1 with contact only */
+function legacyGuestNamesFromBody(body, name, n) {
+  if (n === 1) {
+    return [name];
+  }
+  const s =
+    typeof body.guestNames === "string"
+      ? body.guestNames
+      : typeof body.guest_names_extra === "string"
+        ? body.guest_names_extra
+        : "";
+  if (!s.trim()) return null;
+  const parts = s
+    .split(/[\n,;]+/)
+    .map((p) => p.trim().slice(0, MAX_GUEST_NAME_PART_LEN))
+    .filter(Boolean);
+  const lower = new Set([name.toLowerCase()]);
+  const out = [name];
+  for (const p of parts) {
+    const k = p.toLowerCase();
+    if (lower.has(k)) continue;
+    lower.add(k);
+    out.push(p);
+  }
+  return out.length === n ? out : null;
 }
 
 module.exports = { validateAndNormalize, MAX_GUESTS };

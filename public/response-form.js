@@ -74,6 +74,7 @@
     const attendanceRadios = form?.querySelectorAll('input[name="attendance"]');
     const nameInput = document.getElementById("rsvp-name");
     const guestsInput = document.getElementById("rsvp-guests");
+    const guestNamesContainer = document.getElementById("rsvp-guest-names-fields");
     const guestsCapHintEl = document.getElementById("rsvp-guests-cap-hint");
     let capHintHideTimer = null;
 
@@ -123,7 +124,10 @@
       let next = n;
       if (next > cap) next = cap;
       if (next < GUEST_RANGE.min) next = GUEST_RANGE.min;
-      if (next !== n) guestsInput.value = String(next);
+      if (next !== n) {
+        guestsInput.value = String(next);
+        renderDynamicGuestNames();
+      }
       if (triedAboveCap) showGuestCapHint();
     }
 
@@ -136,9 +140,11 @@
       if (raw === "" && invite != null) {
         guestsInput.value = String(invite);
         guestsInput.setCustomValidity("");
+        renderDynamicGuestNames();
         return;
       }
       clampGuestsValue();
+      renderDynamicGuestNames();
     }
 
     function syncGuestsBeforeSubmit() {
@@ -150,6 +156,56 @@
         guestsInput.value = String(invite);
       }
       clampGuestsValue();
+      renderDynamicGuestNames();
+    }
+
+    function collectGuestNameList() {
+      if (!guestNamesContainer) return [];
+      const inputs = Array.from(
+        guestNamesContainer.querySelectorAll("input[data-rsvp-guest-index]")
+      );
+      inputs.sort(
+        (a, b) =>
+          Number(a.dataset.rsvpGuestIndex) - Number(b.dataset.rsvpGuestIndex)
+      );
+      return inputs.map((el) => el.value.trim());
+    }
+
+    function renderDynamicGuestNames() {
+      if (!guestNamesContainer || !guestsInput) return;
+      const raw = String(guestsInput.value ?? "").trim();
+      const n = parseInt(raw, 10);
+      if (!Number.isFinite(n) || n < GUEST_RANGE.min) {
+        guestNamesContainer.innerHTML = "";
+        return;
+      }
+      const count = Math.min(n, guestCap());
+      const prev = [];
+      guestNamesContainer.querySelectorAll("input[data-rsvp-guest-index]").forEach((el) => {
+        const i = Number(el.dataset.rsvpGuestIndex);
+        if (Number.isFinite(i)) prev[i] = el.value;
+      });
+      guestNamesContainer.innerHTML = "";
+      const labelTemplate =
+        typeof t === "function" ? t("response.guest-label") : "Guest {n}";
+      for (let i = 0; i < count; i++) {
+        const row = document.createElement("div");
+        row.className = "form-group rsvp-guest-name-row";
+        const label = document.createElement("label");
+        const inputId = `rsvp-guest-name-${i}`;
+        label.setAttribute("for", inputId);
+        label.textContent = labelTemplate.replace(/\{n\}/g, String(i + 1));
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = inputId;
+        input.dataset.rsvpGuestIndex = String(i);
+        input.autocomplete = i === 0 ? "name" : "off";
+        input.required = true;
+        input.value = prev[i] != null ? prev[i] : "";
+        row.appendChild(label);
+        row.appendChild(input);
+        guestNamesContainer.appendChild(row);
+      }
     }
 
     function toggleFields() {
@@ -164,6 +220,7 @@
           guestsInput.removeAttribute("required");
           guestsInput.value = "";
           guestsInput.setCustomValidity("");
+          if (guestNamesContainer) guestNamesContainer.innerHTML = "";
           hideGuestCapHint();
         } else {
           applyGuestInputLimits();
@@ -172,6 +229,7 @@
             guestsInput.value = String(invite);
           }
           clampGuestsValue();
+          renderDynamicGuestNames();
         }
       }
       if (nameInput) {
@@ -191,6 +249,7 @@
         const onGuestsInteraction = () => {
           clampGuestsValue();
           guestsInput.setCustomValidity("");
+          renderDynamicGuestNames();
         };
         guestsInput.addEventListener("input", onGuestsInteraction);
         guestsInput.addEventListener("change", onGuestsInteraction);
@@ -340,10 +399,35 @@
             return;
           }
 
+          renderDynamicGuestNames();
+          const guestNameList = collectGuestNameList();
+          const namesOk =
+            guestNameList.length === n && guestNameList.every((s) => s.length > 0);
+          if (!namesOk) {
+            if (errBox) {
+              errBox.textContent =
+                typeof t === "function"
+                  ? t("response.guest-names-incomplete")
+                  : "Please enter a name for each guest.";
+              errBox.hidden = false;
+            }
+            const inputs = guestNamesContainer?.querySelectorAll(
+              "input[data-rsvp-guest-index]"
+            );
+            for (const inp of inputs || []) {
+              if (!String(inp.value ?? "").trim()) {
+                inp.focus();
+                break;
+              }
+            }
+            return;
+          }
+
           const saved = await submitRsvpApi({
             attending: "yes",
             name,
             guestCount: n,
+            guestNameList,
             message,
           });
           if (!saved) return;
@@ -393,6 +477,7 @@
             guestsInput.value = "";
             guestsInput.setCustomValidity("");
           }
+          if (guestNamesContainer) guestNamesContainer.innerHTML = "";
           toggleFields();
         });
       }
@@ -400,6 +485,8 @@
       if (nameInput) {
         nameInput.addEventListener("input", () => nameInput.setCustomValidity(""));
       }
+
+      form._renderDynamicGuestNames = renderDynamicGuestNames;
     }
 
     toggleFields();
@@ -416,6 +503,10 @@
   if (!window.__weddingRsvpCapHintLangListener) {
     window.__weddingRsvpCapHintLangListener = true;
     window.addEventListener("wedding:langchange", () => {
+      const f = document.getElementById("rsvp-form");
+      if (f && typeof f._renderDynamicGuestNames === "function") {
+        f._renderDynamicGuestNames();
+      }
       const el = document.getElementById("rsvp-guests-cap-hint");
       if (!el || el.hidden) return;
       if (parseDefaultGuestCount() == null) return;

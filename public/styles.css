@@ -748,6 +748,46 @@ html[lang="en"] .last-honeymoon-poem {
   display: none !important;
 }
 
+.rsvp-guest-names-section {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 16px 0 4px 0;
+  color: #333;
+  text-align: left;
+}
+
+.rsvp-guest-names-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.rsvp-guest-name-row {
+  margin-bottom: 0;
+}
+
+.rsvp-guest-name-row label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+  text-align: left;
+}
+
+.rsvp-guest-name-row input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
 .rsvp-form-error {
   color: #b00020;
   font-size: 14px;
