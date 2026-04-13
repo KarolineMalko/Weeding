@@ -62,6 +62,10 @@
     return null;
   }
 
+  function guestCapGlobal() {
+    return parseDefaultGuestCount() ?? GUEST_RANGE.max;
+  }
+
   function init() {
     const form = document.getElementById("rsvp-form");
     const formFields = document.getElementById("form-fields");
@@ -70,8 +74,31 @@
     const attendanceRadios = form?.querySelectorAll('input[name="attendance"]');
     const nameInput = document.getElementById("rsvp-name");
     const guestsInput = document.getElementById("rsvp-guests");
+    const guestsCapHintEl = document.getElementById("rsvp-guests-cap-hint");
+    let capHintHideTimer = null;
 
     if (!form || !formFields || !attendanceRadios?.length) return;
+
+    function hideGuestCapHint() {
+      if (capHintHideTimer) {
+        clearTimeout(capHintHideTimer);
+        capHintHideTimer = null;
+      }
+      if (guestsCapHintEl) guestsCapHintEl.hidden = true;
+    }
+
+    function showGuestCapHint() {
+      if (!guestsCapHintEl || parseDefaultGuestCount() == null) return;
+      const cap = guestCap();
+      const template =
+        typeof t === "function"
+          ? t("response.guests-cap-hint")
+          : "Your invite is for up to {max} guests—you can lower the number, not raise it.";
+      guestsCapHintEl.textContent = template.replace(/\{max\}/g, String(cap));
+      guestsCapHintEl.hidden = false;
+      if (capHintHideTimer) clearTimeout(capHintHideTimer);
+      capHintHideTimer = setTimeout(hideGuestCapHint, 5500);
+    }
 
     /** Always read fresh (path/session/query) so cap is never stale after navigation. */
     function guestCap() {
@@ -92,10 +119,12 @@
       const n = parseInt(raw, 10);
       if (!Number.isFinite(n)) return;
       const cap = guestCap();
+      const triedAboveCap = parseDefaultGuestCount() != null && n > cap;
       let next = n;
       if (next > cap) next = cap;
       if (next < GUEST_RANGE.min) next = GUEST_RANGE.min;
       if (next !== n) guestsInput.value = String(next);
+      if (triedAboveCap) showGuestCapHint();
     }
 
     /** Invite links: empty field snaps back to the allowed count (mobile often skips input events). */
@@ -135,6 +164,7 @@
           guestsInput.removeAttribute("required");
           guestsInput.value = "";
           guestsInput.setCustomValidity("");
+          hideGuestCapHint();
         } else {
           applyGuestInputLimits();
           const invite = parseDefaultGuestCount();
@@ -165,6 +195,52 @@
         guestsInput.addEventListener("input", onGuestsInteraction);
         guestsInput.addEventListener("change", onGuestsInteraction);
         guestsInput.addEventListener("blur", normalizeGuestsOnBlur);
+
+        guestsInput.addEventListener(
+          "keydown",
+          (e) => {
+            if (parseDefaultGuestCount() == null) return;
+            const cap = guestCap();
+            const raw = String(guestsInput.value ?? "").trim();
+            const v = raw === "" ? NaN : parseInt(raw, 10);
+            if (!Number.isFinite(v)) return;
+            if (e.key === "ArrowUp" || e.key === "PageUp") {
+              if (v >= cap) {
+                e.preventDefault();
+                showGuestCapHint();
+              }
+            }
+          },
+          true
+        );
+
+        guestsInput.addEventListener(
+          "wheel",
+          (e) => {
+            if (parseDefaultGuestCount() == null) return;
+            const cap = guestCap();
+            const raw = String(guestsInput.value ?? "").trim();
+            const v = raw === "" ? NaN : parseInt(raw, 10);
+            if (!Number.isFinite(v)) return;
+            if (e.deltaY < 0 && v >= cap) {
+              e.preventDefault();
+              showGuestCapHint();
+            }
+          },
+          { passive: false }
+        );
+
+        guestsInput.addEventListener("beforeinput", (e) => {
+          if (parseDefaultGuestCount() == null) return;
+          if (e.inputType !== "stepUp" && e.inputType !== "historyStepUp") return;
+          const cap = guestCap();
+          const raw = String(guestsInput.value ?? "").trim();
+          const v = raw === "" ? NaN : parseInt(raw, 10);
+          if (Number.isFinite(v) && v >= cap) {
+            e.preventDefault();
+            showGuestCapHint();
+          }
+        });
       }
 
       const thankYou = document.getElementById("thank-you");
@@ -336,4 +412,17 @@
     init();
   }
   window.addEventListener("wedding:pagechange", init);
+
+  if (!window.__weddingRsvpCapHintLangListener) {
+    window.__weddingRsvpCapHintLangListener = true;
+    window.addEventListener("wedding:langchange", () => {
+      const el = document.getElementById("rsvp-guests-cap-hint");
+      if (!el || el.hidden) return;
+      if (parseDefaultGuestCount() == null) return;
+      const cap = guestCapGlobal();
+      const template =
+        typeof t === "function" ? t("response.guests-cap-hint") : "";
+      el.textContent = template.replace(/\{max\}/g, String(cap));
+    });
+  }
 })();

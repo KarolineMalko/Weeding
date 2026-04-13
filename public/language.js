@@ -33,6 +33,8 @@ const translations = {
     "response.name-required": "Please enter your name.",
     "response.guests": "Number of guests",
     "response.guests-invalid": "Please enter the number of guests (at least 1).",
+    "response.guests-cap-hint":
+      "Your invite is for up to {max} guests—you can lower the number, not raise it.",
     "response.message": "Message",
     "response.message-example": "e.g. Dietary restrictions, allergies, or anything else you'd like us to know.",
     "response.send": "Send answer",
@@ -75,6 +77,8 @@ const translations = {
     "response.name-required": "Ange ditt namn.",
     "response.guests": "Antal gäster",
     "response.guests-invalid": "Ange antal gäster (minst 1).",
+    "response.guests-cap-hint":
+      "Din inbjudan gäller högst {max} gäster—du kan sänka antalet, inte höja det.",
     "response.message": "Meddelande",
     "response.message-example": "t.ex. Kostrestriktioner, allergier eller annat du vill att vi ska veta.",
     "response.send": "Skicka svar",

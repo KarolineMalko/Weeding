@@ -733,6 +733,21 @@ html[lang="en"] .last-honeymoon-poem {
   margin-bottom: 0;
 }
 
+.rsvp-guests-cap-hint {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 8px 0 0 0;
+  padding: 8px 10px;
+  color: #5c4a00;
+  background: #fff8e6;
+  border: 1px solid #f0e0b8;
+  border-radius: 8px;
+}
+
+.rsvp-guests-cap-hint[hidden] {
+  display: none !important;
+}
+
 .rsvp-form-error {
   color: #b00020;
   font-size: 14px;
