@@ -1,0 +1,21 @@
+Vercel deployment notes
+=====================
+
+Static files + /api serverless functions. The long-running `node index.js` server is NOT used on Vercel.
+
+1) Database (required for RSVP + admin to work)
+   - In the Vercel project: Storage → create/connect Neon (Postgres).
+   - Ensure env vars are set on the project: POSTGRES_URL or DATABASE_URL (often added automatically).
+   - Redeploy after connecting.
+
+2) Admin token
+   - Set WEDDING_ADMIN_TOKEN in Vercel → Settings → Environment Variables (all environments you use).
+   - Redeploy.
+
+3) URLs
+   - Site: https://YOUR-PROJECT.vercel.app
+   - Admin: https://YOUR-PROJECT.vercel.app/admin
+   - API: POST /api/rsvp , GET /api/admin/rsvps
+
+4) Local development
+   - `npm start` still uses SQLite (data/rsvp.db) and index.js — no Neon required locally unless you point POSTGRES_URL at a dev database.
