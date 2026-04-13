@@ -52,7 +52,15 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           });
-          const data = await res.json().catch(() => ({}));
+          const text = await res.text();
+          let data = {};
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch {
+            data = {
+              error: `Server error (${res.status}). ${text ? text.slice(0, 200) : ""}`,
+            };
+          }
           if (!res.ok) {
             const msg = data.error || "Could not save. Try again.";
             if (errBox) {

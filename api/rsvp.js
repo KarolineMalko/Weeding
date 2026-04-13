@@ -1,5 +1,6 @@
 const { validateAndNormalize } = require("../rsvp-validate");
 const { insertRsvpPg, getSql } = require("./rsvp-pg");
+const { sendJson } = require("./send-json");
 
 function readJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -23,19 +24,19 @@ function readJsonBody(req) {
 
 module.exports = async (req, res) => {
   if (req.method === "OPTIONS") {
-    res.status(204).end();
+    sendJson(res, 204);
     return;
   }
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST, OPTIONS");
-    res.status(405).json({ error: "Method not allowed" });
+    sendJson(res, 405, { error: "Method not allowed" });
     return;
   }
 
   if (!getSql()) {
-    res.status(503).json({
+    sendJson(res, 503, {
       error:
-        "Database not configured. In Vercel: Storage → Neon → connect the database, add POSTGRES_URL (or DATABASE_URL), redeploy.",
+        "Database not configured. In Vercel: connect Neon, ensure STORAGE_URL or POSTGRES_URL is set, redeploy.",
     });
     return;
   }
@@ -44,21 +45,21 @@ module.exports = async (req, res) => {
   try {
     body = await readJsonBody(req);
   } catch {
-    res.status(400).json({ error: "Invalid JSON" });
+    sendJson(res, 400, { error: "Invalid JSON" });
     return;
   }
 
   const v = validateAndNormalize(body);
   if (!v.ok) {
-    res.status(400).json({ error: v.error });
+    sendJson(res, 400, { error: v.error });
     return;
   }
 
   try {
     await insertRsvpPg(v.row);
-    res.status(200).json({ ok: true });
+    sendJson(res, 200, { ok: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    sendJson(res, 500, { error: "Server error" });
   }
 };

@@ -3,6 +3,7 @@
     { "source": "/church", "destination": "/church.html" },
     { "source": "/venue", "destination": "/venue.html" },
     { "source": "/last", "destination": "/last.html" },
+    { "source": "/response/admin", "destination": "/admin.html" },
     { "source": "/response", "destination": "/response.html" },
     { "source": "/admin", "destination": "/admin.html" }
   ]

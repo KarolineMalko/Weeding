@@ -8,13 +8,17 @@ Static files + /api serverless functions. The long-running `node index.js` serve
    - Ensure env vars are set on the project: POSTGRES_URL or DATABASE_URL (often added automatically).
    - Redeploy after connecting.
 
-2) Admin token
-   - Set WEDDING_ADMIN_TOKEN in Vercel → Settings → Environment Variables (all environments you use).
-   - Redeploy.
+2) Admin token (required for /admin “Load responses”)
+   - Vercel Dashboard → your project → Settings → Environment Variables.
+   - Name: WEDDING_ADMIN_TOKEN   Value: (same long secret you use locally with export).
+   - Enable for Production (and Preview/Development if you test those URLs).
+   - Save, then Deployments → Redeploy (env vars are not applied to old deployments until you redeploy).
+   - Local: export WEDDING_ADMIN_TOKEN='...' && npm start — only affects your machine, not Vercel.
 
 3) URLs
    - Site: https://YOUR-PROJECT.vercel.app
    - Admin: https://YOUR-PROJECT.vercel.app/admin
+     (also works: .../response/admin — same page)
    - API: POST /api/rsvp , GET /api/admin/rsvps
 
 4) Local development

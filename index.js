@@ -16,6 +16,7 @@ const routes = {
   // "/photo": "photo.html", // commented out
   "/last": "last.html",
   "/response": "response.html",
+  "/response/admin": "admin.html",
   "/admin": "admin.html",
 };
 
