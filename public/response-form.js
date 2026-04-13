@@ -74,6 +74,30 @@
 
     if (!form || !formFields || !attendanceRadios?.length) return;
 
+    function guestCap() {
+      return urlDefaultGuests != null ? urlDefaultGuests : GUEST_RANGE.max;
+    }
+
+    function applyGuestInputLimits() {
+      if (!guestsInput) return;
+      const cap = guestCap();
+      guestsInput.min = String(GUEST_RANGE.min);
+      guestsInput.max = String(Math.min(cap, GUEST_RANGE.max));
+    }
+
+    function clampGuestsValue() {
+      if (!guestsInput) return;
+      const raw = String(guestsInput.value ?? "").trim();
+      if (raw === "") return;
+      const n = Number(raw, 10);
+      if (!Number.isFinite(n)) return;
+      const cap = guestCap();
+      let next = n;
+      if (next > cap) next = cap;
+      if (next < GUEST_RANGE.min) next = GUEST_RANGE.min;
+      if (next !== n) guestsInput.value = String(next);
+    }
+
     function toggleFields() {
       const isYes = form.querySelector('input[name="attendance"]:checked')?.value === "yes";
       formFields.hidden = false;
@@ -86,11 +110,15 @@
           guestsInput.removeAttribute("required");
           guestsInput.value = "";
           guestsInput.setCustomValidity("");
-        } else if (
-          urlDefaultGuests != null &&
-          !String(guestsInput.value ?? "").trim()
-        ) {
-          guestsInput.value = String(urlDefaultGuests);
+        } else {
+          applyGuestInputLimits();
+          if (
+            urlDefaultGuests != null &&
+            !String(guestsInput.value ?? "").trim()
+          ) {
+            guestsInput.value = String(urlDefaultGuests);
+          }
+          clampGuestsValue();
         }
       }
       if (nameInput) {
@@ -107,7 +135,10 @@
       });
 
       if (guestsInput) {
-        guestsInput.addEventListener("input", () => guestsInput.setCustomValidity(""));
+        guestsInput.addEventListener("input", () => {
+          clampGuestsValue();
+          guestsInput.setCustomValidity("");
+        });
       }
 
       const thankYou = document.getElementById("thank-you");
@@ -187,11 +218,13 @@
           if (guestsInput) guestsInput.setCustomValidity("");
           const raw = guestsInput?.value?.trim() ?? "";
           const n = Number(raw);
+          const cap = guestCap();
           const ok =
             raw !== "" &&
             Number.isFinite(n) &&
             Number.isInteger(n) &&
-            n >= 1;
+            n >= GUEST_RANGE.min &&
+            n <= cap;
           if (!ok) {
             if (guestsInput) {
               guestsInput.setCustomValidity(
