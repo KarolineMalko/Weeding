@@ -51,6 +51,8 @@ const translations = {
     "response.thank-you-attending": "Thank you! We look forward to seeing you!",
     "response.change": "Change response",
     "response.back-home": "Back to home",
+    "response.leave-confirm":
+      "You have not sent your RSVP yet. Leave this page and lose what you entered?",
   },
   sv: {
     "nav.wedding": "Bröllop",
@@ -104,6 +106,8 @@ const translations = {
     "response.thank-you-attending": "Tack! Vi ser fram emot att träffa dig!",
     "response.change": "Ändra svar",
     "response.back-home": "Tillbaka till startsidan",
+    "response.leave-confirm":
+      "Du har inte skickat ditt svar än. Lämna sidan och förlora det du skrivit?",
   },
 };
 

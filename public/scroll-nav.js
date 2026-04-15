@@ -37,6 +37,17 @@
 
   async function goToPage(index) {
     if (index < 0 || index >= PAGES.length) return;
+    const responseIdx = PAGES.indexOf("/response");
+    const currentIdx = getCurrentPageIndex();
+    if (
+      responseIdx >= 0 &&
+      currentIdx === responseIdx &&
+      index !== responseIdx &&
+      typeof window.__weddingRsvpConfirmLeave === "function" &&
+      !window.__weddingRsvpConfirmLeave()
+    ) {
+      return;
+    }
     const path = PAGES[index];
     const url = path === "/" ? "/" : path;
 

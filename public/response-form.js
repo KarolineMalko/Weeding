@@ -2,6 +2,34 @@
   const GUEST_RANGE = { min: 1, max: 99 };
   const GUEST_DEFAULT_STORAGE = "wedding-default-guests";
 
+  function markRsvpFormDirty() {
+    const f = document.getElementById("rsvp-form");
+    if (f && !f.hidden) f.dataset.rsvpDirty = "1";
+  }
+
+  function clearRsvpFormDirty() {
+    const f = document.getElementById("rsvp-form");
+    if (f) delete f.dataset.rsvpDirty;
+  }
+
+  window.__weddingRsvpConfirmLeave = function confirmRsvpLeave() {
+    const f = document.getElementById("rsvp-form");
+    if (!f || f.hidden || !f.dataset.rsvpDirty) return true;
+    const msg =
+      typeof t === "function"
+        ? t("response.leave-confirm")
+        : "You have not sent your RSVP yet. Leave this page and lose what you entered?";
+    return window.confirm(msg);
+  };
+
+  window.addEventListener("beforeunload", (e) => {
+    const f = document.getElementById("rsvp-form");
+    if (f && !f.hidden && f.dataset.rsvpDirty) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
   (function applyRootGuestPath() {
     const pathname = (window.location.pathname || "/").replace(/\/$/, "") || "/";
     const rootMatch = /^\/(\d+)$/.exec(pathname);
@@ -242,6 +270,9 @@
     if (!form.dataset.rsvpBound) {
       form.dataset.rsvpBound = "1";
 
+      form.addEventListener("input", markRsvpFormDirty);
+      form.addEventListener("change", markRsvpFormDirty);
+
       attendanceRadios.forEach((radio) => {
         radio.addEventListener("change", toggleFields);
       });
@@ -432,6 +463,7 @@
           });
           if (!saved) return;
 
+          clearRsvpFormDirty();
           form.hidden = true;
           if (thankYou) {
             const thankMsg = thankYou.querySelector(".rsvp-thank-you-msg");
@@ -467,6 +499,7 @@
         });
         if (!saved) return;
 
+        clearRsvpFormDirty();
         form.hidden = true;
         if (thankYou) {
           const thankMsg = thankYou.querySelector(".rsvp-thank-you-msg");
@@ -480,6 +513,7 @@
 
       if (changeBtn) {
         changeBtn.addEventListener("click", () => {
+          clearRsvpFormDirty();
           if (thankYou) thankYou.hidden = true;
           form.hidden = false;
           form.querySelector('input[name="attendance"][value="yes"]').checked = true;
