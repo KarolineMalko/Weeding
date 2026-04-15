@@ -7,8 +7,27 @@
   const LAST_PAGE_IDX = PAGES.indexOf("/last");
   const LAST_PAGE_SCROLL_UP_SWIPE = 80;
   const LAST_PAGE_SCROLL_UP_WHEEL_ACCUM = 96;
+  const RESPONSE_PAGE_IDX = PAGES.indexOf("/response");
+  const INNER_SCROLL_EPS = 2;
   let lastPageScrollUpWheelAccum = 0;
   let lastPageWheelAccumResetTimer = null;
+
+  function getResponseContentEl() {
+    return document.querySelector(".page-response .content.response-content");
+  }
+
+  /** RSVP page: do not change to "More" while the column or a focused field can still scroll up. */
+  function responseInnerScrollBlocksPageUp() {
+    if (getCurrentPageIndex() !== RESPONSE_PAGE_IDX) return false;
+    const main = getResponseContentEl();
+    if (main && main.scrollTop > INNER_SCROLL_EPS) return true;
+    const a = document.activeElement;
+    if (!a || !a.closest || !a.closest("#rsvp-form")) return false;
+    const tag = a.tagName;
+    if (tag !== "TEXTAREA" && tag !== "INPUT") return false;
+    if (a.scrollHeight <= a.clientHeight + 1) return false;
+    return a.scrollTop > INNER_SCROLL_EPS;
+  }
 
   function isLastPage() {
     return getCurrentPageIndex() === LAST_PAGE_IDX;
@@ -146,6 +165,7 @@
         return;
       }
       if (e.deltaX < 0) {
+        if (responseInnerScrollBlocksPageUp()) return;
         if (isLastPage()) {
           lastPageScrollUpWheelAccum += absX;
           clearTimeout(lastPageWheelAccumResetTimer);
@@ -173,6 +193,7 @@
     }
 
     if (e.deltaY < 0) {
+      if (responseInnerScrollBlocksPageUp()) return;
       if (isLastPage()) {
         lastPageScrollUpWheelAccum += absY;
         clearTimeout(lastPageWheelAccumResetTimer);
@@ -202,6 +223,7 @@
         lastWheel = now;
         handleScrollDown();
       } else if (dx < 0 && absX > upTh) {
+        if (responseInnerScrollBlocksPageUp()) return;
         resetLastPageScrollUpAccum();
         lastWheel = now;
         handleScrollUp();
@@ -215,6 +237,7 @@
         lastWheel = now;
         handleScrollDown();
       } else if (dy < -upTh) {
+        if (responseInnerScrollBlocksPageUp()) return;
         resetLastPageScrollUpAccum();
         lastWheel = now;
         handleScrollUp();

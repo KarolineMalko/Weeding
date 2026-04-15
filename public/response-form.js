@@ -101,6 +101,52 @@
       .filter(Boolean);
   }
 
+  function installRsvpViewportSettle() {
+    if (window.__weddingRsvpViewportSettle) return;
+    window.__weddingRsvpViewportSettle = true;
+
+    function settleAfterKeyboard() {
+      const main = document.querySelector(".page-response .content.response-content");
+      const section = document.querySelector(".page-response .response-form-section");
+      if (!main || !section) return;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const mTop = main.getBoundingClientRect().top;
+          const pad = 8;
+          const secTop = section.getBoundingClientRect().top;
+          if (secTop < mTop + pad) {
+            main.scrollTop += secTop - mTop - pad;
+          }
+        });
+      });
+    }
+
+    if (window.visualViewport) {
+      let lastVv = window.visualViewport.height;
+      window.visualViewport.addEventListener("resize", () => {
+        const h = window.visualViewport.height;
+        if (h > lastVv + 60) settleAfterKeyboard();
+        lastVv = h;
+      });
+    }
+
+    let blurSettleTimer = null;
+    document.addEventListener(
+      "focusout",
+      (e) => {
+        const t = e.target;
+        if (!t || (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA")) return;
+        if (!t.closest("#rsvp-form")) return;
+        clearTimeout(blurSettleTimer);
+        blurSettleTimer = setTimeout(() => {
+          if (document.activeElement && document.activeElement.closest("#rsvp-form")) return;
+          settleAfterKeyboard();
+        }, 400);
+      },
+      true
+    );
+  }
+
   function init() {
     const form = document.getElementById("rsvp-form");
     const formFields = document.getElementById("form-fields");
@@ -116,6 +162,8 @@
     let capHintHideTimer = null;
 
     if (!form || !formFields || !attendanceRadios?.length) return;
+
+    installRsvpViewportSettle();
 
     function hideGuestCapHint() {
       if (capHintHideTimer) {
