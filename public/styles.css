@@ -639,6 +639,7 @@ html[lang="en"] .last-honeymoon-poem {
   text-align: left;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   scrollbar-gutter: stable;
   scrollbar-width: thin;
@@ -721,6 +722,7 @@ html[lang="en"] .last-honeymoon-poem {
   min-height: 72px;
   font-size: 15px;
   padding: 8px 10px;
+  overscroll-behavior: contain;
 }
 
 .page-response .response-form-section .form-group input {

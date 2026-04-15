@@ -3,6 +3,24 @@
   const DEBOUNCE_MS = 80;
   const SWIPE_THRESHOLD = 24;
   const WHEEL_DELTA_THRESHOLD = 12;
+  /** On the last page, going "back" needs a stronger gesture so normal scrolling does not leave the page. */
+  const LAST_PAGE_IDX = PAGES.indexOf("/last");
+  const LAST_PAGE_SCROLL_UP_SWIPE = 80;
+  const LAST_PAGE_SCROLL_UP_WHEEL_ACCUM = 96;
+  let lastPageScrollUpWheelAccum = 0;
+  let lastPageWheelAccumResetTimer = null;
+
+  function isLastPage() {
+    return getCurrentPageIndex() === LAST_PAGE_IDX;
+  }
+
+  function resetLastPageScrollUpAccum() {
+    lastPageScrollUpWheelAccum = 0;
+    if (lastPageWheelAccumResetTimer) {
+      clearTimeout(lastPageWheelAccumResetTimer);
+      lastPageWheelAccumResetTimer = null;
+    }
+  }
 
   function normalizePagePath(path) {
     const p = (path || "/").replace(/\/$/, "") || "/";
@@ -37,6 +55,7 @@
 
   async function goToPage(index) {
     if (index < 0 || index >= PAGES.length) return;
+    resetLastPageScrollUpAccum();
     const responseIdx = PAGES.indexOf("/response");
     const currentIdx = getCurrentPageIndex();
     if (
@@ -112,22 +131,61 @@
   let lastWheel = 0;
   function onWheel(e) {
     const now = Date.now();
-    if (now - lastWheel < DEBOUNCE_MS) return;
-
     const absX = Math.abs(e.deltaX);
     const absY = Math.abs(e.deltaY);
 
-    if (absX > absY && absX >= WHEEL_DELTA_THRESHOLD) {
+    const horizontalDominant = absX > absY && absX >= WHEEL_DELTA_THRESHOLD;
+    const verticalDominant = absY >= absX && absY >= WHEEL_DELTA_THRESHOLD;
+
+    if (horizontalDominant) {
+      if (e.deltaX > 0) {
+        resetLastPageScrollUpAccum();
+        if (now - lastWheel < DEBOUNCE_MS) return;
+        lastWheel = now;
+        handleScrollDown();
+        return;
+      }
+      if (e.deltaX < 0) {
+        if (isLastPage()) {
+          lastPageScrollUpWheelAccum += absX;
+          clearTimeout(lastPageWheelAccumResetTimer);
+          lastPageWheelAccumResetTimer = setTimeout(resetLastPageScrollUpAccum, 500);
+          if (lastPageScrollUpWheelAccum < LAST_PAGE_SCROLL_UP_WHEEL_ACCUM) return;
+          resetLastPageScrollUpAccum();
+        } else {
+          resetLastPageScrollUpAccum();
+        }
+        if (now - lastWheel < DEBOUNCE_MS) return;
+        lastWheel = now;
+        handleScrollUp();
+        return;
+      }
+    }
+
+    if (!verticalDominant) return;
+
+    if (e.deltaY > 0) {
+      resetLastPageScrollUpAccum();
+      if (now - lastWheel < DEBOUNCE_MS) return;
       lastWheel = now;
-      if (e.deltaX > 0) handleScrollDown();
-      else if (e.deltaX < 0) handleScrollUp();
+      handleScrollDown();
       return;
     }
 
-    if (absY < WHEEL_DELTA_THRESHOLD) return;
-    lastWheel = now;
-    if (e.deltaY > 0) handleScrollDown();
-    else if (e.deltaY < 0) handleScrollUp();
+    if (e.deltaY < 0) {
+      if (isLastPage()) {
+        lastPageScrollUpWheelAccum += absY;
+        clearTimeout(lastPageWheelAccumResetTimer);
+        lastPageWheelAccumResetTimer = setTimeout(resetLastPageScrollUpAccum, 500);
+        if (lastPageScrollUpWheelAccum < LAST_PAGE_SCROLL_UP_WHEEL_ACCUM) return;
+        resetLastPageScrollUpAccum();
+      } else {
+        resetLastPageScrollUpAccum();
+      }
+      if (now - lastWheel < DEBOUNCE_MS) return;
+      lastWheel = now;
+      handleScrollUp();
+    }
   }
 
   function trySwipe(dx, dy) {
@@ -136,17 +194,31 @@
     const now = Date.now();
     if (now - lastWheel < DEBOUNCE_MS) return;
 
+    const upTh = isLastPage() ? LAST_PAGE_SCROLL_UP_SWIPE : SWIPE_THRESHOLD;
+
     if (absX > absY && absX > SWIPE_THRESHOLD) {
-      lastWheel = now;
-      if (dx > 0) handleScrollDown();
-      else if (dx < 0) handleScrollUp();
+      if (dx > 0) {
+        resetLastPageScrollUpAccum();
+        lastWheel = now;
+        handleScrollDown();
+      } else if (dx < 0 && absX > upTh) {
+        resetLastPageScrollUpAccum();
+        lastWheel = now;
+        handleScrollUp();
+      }
       return;
     }
 
     if (absY >= absX && absY > SWIPE_THRESHOLD) {
-      lastWheel = now;
-      if (dy > SWIPE_THRESHOLD) handleScrollDown();
-      else if (dy < -SWIPE_THRESHOLD) handleScrollUp();
+      if (dy > SWIPE_THRESHOLD) {
+        resetLastPageScrollUpAccum();
+        lastWheel = now;
+        handleScrollDown();
+      } else if (dy < -upTh) {
+        resetLastPageScrollUpAccum();
+        lastWheel = now;
+        handleScrollUp();
+      }
     }
   }
 
