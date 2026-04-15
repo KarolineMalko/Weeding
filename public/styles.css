@@ -788,6 +788,33 @@ html[lang="en"] .last-honeymoon-poem {
   background-color: #fff;
 }
 
+.rsvp-guest-names-combined-wrap {
+  margin-top: 12px;
+}
+
+.rsvp-guest-names-combined-wrap label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
+  text-align: left;
+}
+
+.rsvp-guest-names-combined-wrap textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 1.45;
+  box-sizing: border-box;
+  background-color: #fff;
+  resize: vertical;
+  min-height: 4.5em;
+}
+
 .rsvp-form-error {
   color: #b00020;
   font-size: 14px;

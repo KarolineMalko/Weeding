@@ -41,7 +41,7 @@
             </label>
           </div>
           <div class="rsvp-form-fields" id="form-fields">
-            <div class="form-group">
+            <div class="form-group" id="rsvp-name-group">
               <label for="rsvp-name" data-i18n="response.name">Name</label>
               <input type="text" id="rsvp-name" name="name" required autocomplete="name" placeholder="" />
             </div>
@@ -64,11 +64,19 @@
                 role="status"
                 aria-live="polite"
               ></p>
-              <p class="rsvp-guest-names-section" data-i18n="response.guest-names-section">Guest names</p>
-              <div id="rsvp-guest-names-fields" class="rsvp-guest-names-fields"></div>
-              <p class="message-example rsvp-guest-names-hint" data-i18n="response.guest-names-hint">
-                One field per person attending (names should match the number above).
-              </p>
+              <div class="form-group rsvp-guest-names-combined-wrap" id="rsvp-guest-names-wrap" hidden>
+                <label for="rsvp-guest-names-combined" data-i18n="response.guest-names-section">Guest names</label>
+                <textarea
+                  id="rsvp-guest-names-combined"
+                  name="guestNamesCombined"
+                  rows="3"
+                  autocomplete="off"
+                  data-i18n-placeholder="response.guest-names-placeholder"
+                ></textarea>
+                <p class="message-example rsvp-guest-names-hint" data-i18n="response.guest-names-hint">
+                  Separate each full name with a comma. The number of names must match “Number of guests”.
+                </p>
+              </div>
             </div>
             <div class="form-group">
               <label for="rsvp-message" data-i18n="response.message">Message</label>

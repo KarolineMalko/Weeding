@@ -34,9 +34,13 @@ const translations = {
     "response.guests": "Number of guests",
     "response.guest-names-section": "Guest names",
     "response.guest-label": "Guest {n}",
+    "response.guest-names-placeholder":
+      "e.g. Anna Andersson, Erik Andersson, Lisa Andersson",
     "response.guest-names-hint":
-      "One field per person—the number of fields matches “Number of guests”.",
-    "response.guest-names-incomplete": "Please enter a name for each guest.",
+      "Separate each full name with a comma. The number of names must match “Number of guests”.",
+    "response.guest-names-incomplete": "Please enter all guest names, separated by commas.",
+    "response.guest-names-wrong-count":
+      "Please enter exactly {n} names, separated by commas (e.g. First Last, First Last).",
     "response.guests-invalid": "Please enter the number of guests (at least 1).",
     "response.guests-cap-hint":
       "Your invite is for up to {max} guests—you can lower the number, not raise it.",
@@ -83,9 +87,13 @@ const translations = {
     "response.guests": "Antal gäster",
     "response.guest-names-section": "Gästers namn",
     "response.guest-label": "Gäst {n}",
+    "response.guest-names-placeholder":
+      "t.ex. Anna Andersson, Erik Andersson, Lisa Andersson",
     "response.guest-names-hint":
-      "Ett fält per person—antalet fält följer “Antal gäster”.",
-    "response.guest-names-incomplete": "Ange namn för varje gäst.",
+      "Separera varje fullständigt namn med kommatecken. Antalet namn ska stämma med “Antal gäster”.",
+    "response.guest-names-incomplete": "Ange alla gästers namn, separerade med kommatecken.",
+    "response.guest-names-wrong-count":
+      "Ange exakt {n} namn, separerade med kommatecken (t.ex. Förnamn Efternamn, Förnamn Efternamn).",
     "response.guests-invalid": "Ange antal gäster (minst 1).",
     "response.guests-cap-hint":
       "Din inbjudan gäller högst {max} gäster—du kan sänka antalet, inte höja det.",
@@ -128,6 +136,11 @@ function applyTranslations() {
     const key = el.getAttribute("data-i18n");
     const text = t(key);
     el.textContent = text;
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    const text = t(key);
+    if (text) el.placeholder = text;
   });
 }
 

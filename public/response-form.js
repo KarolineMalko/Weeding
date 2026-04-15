@@ -66,6 +66,13 @@
     return parseDefaultGuestCount() ?? GUEST_RANGE.max;
   }
 
+  function parseCombinedGuestNames(str) {
+    return String(str || "")
+      .split(/[\n,;]+/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+  }
+
   function init() {
     const form = document.getElementById("rsvp-form");
     const formFields = document.getElementById("form-fields");
@@ -73,8 +80,10 @@
     const messageExample = document.getElementById("message-example");
     const attendanceRadios = form?.querySelectorAll('input[name="attendance"]');
     const nameInput = document.getElementById("rsvp-name");
+    const nameGroup = document.getElementById("rsvp-name-group");
     const guestsInput = document.getElementById("rsvp-guests");
-    const guestNamesContainer = document.getElementById("rsvp-guest-names-fields");
+    const guestNamesWrap = document.getElementById("rsvp-guest-names-wrap");
+    const guestNamesCombined = document.getElementById("rsvp-guest-names-combined");
     const guestsCapHintEl = document.getElementById("rsvp-guests-cap-hint");
     let capHintHideTimer = null;
 
@@ -126,7 +135,7 @@
       if (next < GUEST_RANGE.min) next = GUEST_RANGE.min;
       if (next !== n) {
         guestsInput.value = String(next);
-        renderDynamicGuestNames();
+        updateGuestNamesUI();
       }
       if (triedAboveCap) showGuestCapHint();
     }
@@ -140,11 +149,11 @@
       if (raw === "" && invite != null) {
         guestsInput.value = String(invite);
         guestsInput.setCustomValidity("");
-        renderDynamicGuestNames();
+        updateGuestNamesUI();
         return;
       }
       clampGuestsValue();
-      renderDynamicGuestNames();
+      updateGuestNamesUI();
     }
 
     function syncGuestsBeforeSubmit() {
@@ -156,55 +165,42 @@
         guestsInput.value = String(invite);
       }
       clampGuestsValue();
-      renderDynamicGuestNames();
+      updateGuestNamesUI();
     }
 
-    function collectGuestNameList() {
-      if (!guestNamesContainer) return [];
-      const inputs = Array.from(
-        guestNamesContainer.querySelectorAll("input[data-rsvp-guest-index]")
-      );
-      inputs.sort(
-        (a, b) =>
-          Number(a.dataset.rsvpGuestIndex) - Number(b.dataset.rsvpGuestIndex)
-      );
-      return inputs.map((el) => el.value.trim());
-    }
-
-    function renderDynamicGuestNames() {
-      if (!guestNamesContainer || !guestsInput) return;
+    /** One guest: show contact name field. Two+: single comma-separated list (all full names). */
+    function updateGuestNamesUI() {
+      if (!guestsInput) return;
       const raw = String(guestsInput.value ?? "").trim();
       const n = parseInt(raw, 10);
+      if (!guestNamesWrap || !guestNamesCombined) return;
+
       if (!Number.isFinite(n) || n < GUEST_RANGE.min) {
-        guestNamesContainer.innerHTML = "";
+        guestNamesWrap.hidden = true;
+        guestNamesCombined.removeAttribute("required");
+        if (nameGroup) {
+          nameGroup.hidden = false;
+        }
+        if (nameInput) nameInput.required = true;
         return;
       }
+
       const count = Math.min(n, guestCap());
-      const prev = [];
-      guestNamesContainer.querySelectorAll("input[data-rsvp-guest-index]").forEach((el) => {
-        const i = Number(el.dataset.rsvpGuestIndex);
-        if (Number.isFinite(i)) prev[i] = el.value;
-      });
-      guestNamesContainer.innerHTML = "";
-      const labelTemplate =
-        typeof t === "function" ? t("response.guest-label") : "Guest {n}";
-      for (let i = 0; i < count; i++) {
-        const row = document.createElement("div");
-        row.className = "form-group rsvp-guest-name-row";
-        const label = document.createElement("label");
-        const inputId = `rsvp-guest-name-${i}`;
-        label.setAttribute("for", inputId);
-        label.textContent = labelTemplate.replace(/\{n\}/g, String(i + 1));
-        const input = document.createElement("input");
-        input.type = "text";
-        input.id = inputId;
-        input.dataset.rsvpGuestIndex = String(i);
-        input.autocomplete = i === 0 ? "name" : "off";
-        input.required = true;
-        input.value = prev[i] != null ? prev[i] : "";
-        row.appendChild(label);
-        row.appendChild(input);
-        guestNamesContainer.appendChild(row);
+      if (count === 1) {
+        guestNamesWrap.hidden = true;
+        guestNamesCombined.removeAttribute("required");
+        guestNamesCombined.value = "";
+        if (nameGroup) nameGroup.hidden = false;
+        if (nameInput) nameInput.required = true;
+      } else {
+        guestNamesWrap.hidden = false;
+        guestNamesCombined.required = true;
+        if (nameGroup) nameGroup.hidden = true;
+        if (nameInput) {
+          nameInput.removeAttribute("required");
+          nameInput.value = "";
+          nameInput.setCustomValidity("");
+        }
       }
     }
 
@@ -220,7 +216,12 @@
           guestsInput.removeAttribute("required");
           guestsInput.value = "";
           guestsInput.setCustomValidity("");
-          if (guestNamesContainer) guestNamesContainer.innerHTML = "";
+          if (guestNamesCombined) {
+            guestNamesCombined.value = "";
+            guestNamesCombined.removeAttribute("required");
+          }
+          if (guestNamesWrap) guestNamesWrap.hidden = true;
+          if (nameGroup) nameGroup.hidden = false;
           hideGuestCapHint();
         } else {
           applyGuestInputLimits();
@@ -229,12 +230,12 @@
             guestsInput.value = String(invite);
           }
           clampGuestsValue();
-          renderDynamicGuestNames();
+          updateGuestNamesUI();
         }
       }
-      if (nameInput) {
+      if (nameInput && !isYes) {
         nameInput.required = true;
-        if (!isYes) nameInput.setCustomValidity("");
+        nameInput.setCustomValidity("");
       }
     }
 
@@ -249,7 +250,7 @@
         const onGuestsInteraction = () => {
           clampGuestsValue();
           guestsInput.setCustomValidity("");
-          renderDynamicGuestNames();
+          updateGuestNamesUI();
         };
         guestsInput.addEventListener("input", onGuestsInteraction);
         guestsInput.addEventListener("change", onGuestsInteraction);
@@ -359,21 +360,7 @@
 
         const attendance = form.querySelector('input[name="attendance"]:checked')?.value;
         const message = form.querySelector("#rsvp-message")?.value?.trim() || "";
-        const name = form.querySelector("#rsvp-name")?.value?.trim() || "";
         const isYes = attendance === "yes";
-
-        if (!name) {
-          if (nameInput) {
-            nameInput.setCustomValidity(
-              typeof t === "function"
-                ? t("response.name-required")
-                : "Please enter your name."
-            );
-            nameInput.reportValidity();
-          }
-          return;
-        }
-        if (nameInput) nameInput.setCustomValidity("");
 
         if (isYes) {
           if (guestsInput) guestsInput.setCustomValidity("");
@@ -399,33 +386,46 @@
             return;
           }
 
-          renderDynamicGuestNames();
-          const guestNameList = collectGuestNameList();
-          const namesOk =
-            guestNameList.length === n && guestNameList.every((s) => s.length > 0);
-          if (!namesOk) {
-            if (errBox) {
-              errBox.textContent =
-                typeof t === "function"
-                  ? t("response.guest-names-incomplete")
-                  : "Please enter a name for each guest.";
-              errBox.hidden = false;
-            }
-            const inputs = guestNamesContainer?.querySelectorAll(
-              "input[data-rsvp-guest-index]"
-            );
-            for (const inp of inputs || []) {
-              if (!String(inp.value ?? "").trim()) {
-                inp.focus();
-                break;
+          updateGuestNamesUI();
+
+          let guestNameList;
+          let contactName;
+
+          if (n === 1) {
+            contactName = form.querySelector("#rsvp-name")?.value?.trim() || "";
+            if (!contactName) {
+              if (nameInput) {
+                nameInput.setCustomValidity(
+                  typeof t === "function"
+                    ? t("response.name-required")
+                    : "Please enter your name."
+                );
+                nameInput.reportValidity();
               }
+              return;
             }
-            return;
+            if (nameInput) nameInput.setCustomValidity("");
+            guestNameList = [contactName];
+          } else {
+            guestNameList = parseCombinedGuestNames(guestNamesCombined?.value ?? "");
+            if (guestNameList.length !== n || guestNameList.some((s) => !s)) {
+              const template =
+                typeof t === "function"
+                  ? t("response.guest-names-wrong-count")
+                  : "Please enter exactly {n} names, separated by commas.";
+              if (errBox) {
+                errBox.textContent = template.replace(/\{n\}/g, String(n));
+                errBox.hidden = false;
+              }
+              guestNamesCombined?.focus();
+              return;
+            }
+            contactName = guestNameList[0];
           }
 
           const saved = await submitRsvpApi({
             attending: "yes",
-            name,
+            name: contactName,
             guestCount: n,
             guestNameList,
             message,
@@ -446,9 +446,23 @@
           return;
         }
 
+        const declineName = form.querySelector("#rsvp-name")?.value?.trim() || "";
+        if (!declineName) {
+          if (nameInput) {
+            nameInput.setCustomValidity(
+              typeof t === "function"
+                ? t("response.name-required")
+                : "Please enter your name."
+            );
+            nameInput.reportValidity();
+          }
+          return;
+        }
+        if (nameInput) nameInput.setCustomValidity("");
+
         const saved = await submitRsvpApi({
           attending: "no",
-          name,
+          name: declineName,
           message,
         });
         if (!saved) return;
@@ -477,7 +491,7 @@
             guestsInput.value = "";
             guestsInput.setCustomValidity("");
           }
-          if (guestNamesContainer) guestNamesContainer.innerHTML = "";
+          if (guestNamesCombined) guestNamesCombined.value = "";
           toggleFields();
         });
       }
@@ -485,8 +499,17 @@
       if (nameInput) {
         nameInput.addEventListener("input", () => nameInput.setCustomValidity(""));
       }
+      if (guestNamesCombined) {
+        guestNamesCombined.addEventListener("input", () => {
+          const errBox = document.getElementById("rsvp-submit-error");
+          if (errBox) {
+            errBox.textContent = "";
+            errBox.hidden = true;
+          }
+        });
+      }
 
-      form._renderDynamicGuestNames = renderDynamicGuestNames;
+      form._updateGuestNamesUI = updateGuestNamesUI;
     }
 
     toggleFields();
@@ -504,8 +527,8 @@
     window.__weddingRsvpCapHintLangListener = true;
     window.addEventListener("wedding:langchange", () => {
       const f = document.getElementById("rsvp-form");
-      if (f && typeof f._renderDynamicGuestNames === "function") {
-        f._renderDynamicGuestNames();
+      if (f && typeof f._updateGuestNamesUI === "function") {
+        f._updateGuestNamesUI();
       }
       const el = document.getElementById("rsvp-guests-cap-hint");
       if (!el || el.hidden) return;
