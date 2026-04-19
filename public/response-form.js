@@ -108,13 +108,6 @@
     function settleAfterKeyboard() {
       const main = document.querySelector(".page-response .content.response-content");
       const section = document.querySelector(".page-response .response-form-section");
-
-      try {
-        window.scrollTo(0, 0);
-        if (document.documentElement) document.documentElement.scrollTop = 0;
-        if (document.body) document.body.scrollTop = 0;
-      } catch (_) {}
-
       if (!main || !section) return;
 
       requestAnimationFrame(() => {
