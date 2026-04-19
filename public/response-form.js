@@ -108,14 +108,28 @@
     function settleAfterKeyboard() {
       const main = document.querySelector(".page-response .content.response-content");
       const section = document.querySelector(".page-response .response-form-section");
+
+      try {
+        window.scrollTo(0, 0);
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (document.body) document.body.scrollTop = 0;
+      } catch (_) {}
+
       if (!main || !section) return;
+
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          const maxScroll = Math.max(0, main.scrollHeight - main.clientHeight);
+          if (main.scrollTop > maxScroll) main.scrollTop = maxScroll;
+
           const mTop = main.getBoundingClientRect().top;
           const pad = 8;
           const secTop = section.getBoundingClientRect().top;
           if (secTop < mTop + pad) {
             main.scrollTop += secTop - mTop - pad;
+            if (main.scrollTop > maxScroll) main.scrollTop = maxScroll;
+          } else if (maxScroll <= 1) {
+            main.scrollTop = 0;
           }
         });
       });
@@ -125,7 +139,10 @@
       let lastVv = window.visualViewport.height;
       window.visualViewport.addEventListener("resize", () => {
         const h = window.visualViewport.height;
-        if (h > lastVv + 60) settleAfterKeyboard();
+        if (h > lastVv + 60) {
+          settleAfterKeyboard();
+          setTimeout(settleAfterKeyboard, 320);
+        }
         lastVv = h;
       });
     }

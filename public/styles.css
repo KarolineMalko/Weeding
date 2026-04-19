@@ -645,6 +645,10 @@ html[lang="en"] .last-honeymoon-poem {
   scrollbar-width: thin;
   scrollbar-color: rgba(100, 140, 180, 0.55) rgba(255, 255, 255, 0.4);
   box-sizing: border-box;
+  /* Match visible viewport when mobile keyboard opens/closes (100vh stays “large” on many phones). */
+  height: calc(100vh - 57px);
+  height: calc(100dvh - 57px);
+  min-height: 0;
 }
 
 .page-response .content.response-content::-webkit-scrollbar {
@@ -1008,6 +1012,8 @@ html[lang="en"] .last-honeymoon-poem {
     padding-right: 12px;
     padding-bottom: 20px;
     background: url("/public/images/response-page-bg.png") center/cover no-repeat;
+    height: calc(100vh - 46px);
+    height: calc(100dvh - 46px);
   }
 
   .page-response .response-form-section {
