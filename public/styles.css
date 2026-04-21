@@ -237,7 +237,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  padding-top: 8vh;
+  padding-top: 12vh;
 }
 
 .page-home .home-hero {
@@ -978,7 +978,7 @@ html[lang="en"] .last-honeymoon-poem {
   }
 
   .page-home .content {
-    padding-top: 6vh;
+    padding-top: 10vh;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
