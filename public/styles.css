@@ -237,7 +237,7 @@ body {
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  padding-top: 18vh;
+  padding-top: 8vh;
 }
 
 .page-home .home-hero {
@@ -259,6 +259,15 @@ body {
 .page-home .home-hero .subtitle {
   font-size: 40px;
   margin-top: 32px;
+}
+
+.page-home .home-hero .home-date {
+  font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
+  font-size: 26px;
+  letter-spacing: 0.08em;
+  margin-top: 20px;
+  margin-bottom: 0;
+  opacity: 0.95;
 }
 
 .page-church .content {
@@ -969,7 +978,7 @@ html[lang="en"] .last-honeymoon-poem {
   }
 
   .page-home .content {
-    padding-top: 14vh;
+    padding-top: 6vh;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
@@ -987,6 +996,11 @@ html[lang="en"] .last-honeymoon-poem {
   .page-home .home-hero .subtitle {
     font-size: 30px;
     margin-top: 28px;
+  }
+
+  .page-home .home-hero .home-date {
+    font-size: 20px;
+    margin-top: 16px;
   }
 
   .page-church .content {
@@ -1194,5 +1208,10 @@ html[lang="en"] .last-honeymoon-poem {
   .page-home .home-hero .subtitle {
     font-size: 35px;
     margin-top: 28px;
+  }
+
+  .page-home .home-hero .home-date {
+    font-size: 18px;
+    margin-top: 14px;
   }
 }
