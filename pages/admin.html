@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
     <meta name="robots" content="noindex, nofollow" />
     <title>RSVP admin - Wedding</title>
-    <link rel="stylesheet" href="/public/styles.css?v=2" />
+    <link rel="stylesheet" href="/public/styles.css?v=4" />
   </head>
   <body class="page-admin">
     <main class="content admin-content">
@@ -16,24 +16,37 @@
         </p>
         <div class="admin-login-row">
           <label for="admin-token">Admin token</label>
-          <input type="password" id="admin-token" autocomplete="off" class="admin-token-input" />
+          <div class="admin-token-input-row">
+            <input type="password" id="admin-token" autocomplete="off" class="admin-token-input" />
+            <button
+              type="button"
+              class="admin-token-toggle"
+              id="admin-token-toggle"
+              aria-pressed="false"
+              aria-label="Show admin token"
+            >
+              Show
+            </button>
+          </div>
           <button type="button" class="admin-load-btn" id="admin-load-btn">Load responses</button>
         </div>
         <p class="admin-form-error" id="admin-error" hidden role="alert"></p>
         <div class="admin-table-wrap" id="admin-table-wrap" hidden>
-          <table class="admin-table" id="admin-table">
-            <thead>
-              <tr>
-                <th>When (UTC)</th>
-                <th>Attending</th>
-                <th>Code</th>
-                <th>Name / names</th>
-                <th>#</th>
-                <th>Message</th>
-              </tr>
-            </thead>
-            <tbody id="admin-tbody"></tbody>
-          </table>
+          <div class="admin-table-scroll">
+            <table class="admin-table" id="admin-table">
+              <thead>
+                <tr>
+                  <th>When (UTC)</th>
+                  <th>Attending</th>
+                  <th>Code</th>
+                  <th>Name / names</th>
+                  <th>#</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody id="admin-tbody"></tbody>
+            </table>
+          </div>
           <p class="admin-summary" id="admin-summary"></p>
         </div>
       </section>

@@ -1122,13 +1122,42 @@ html[lang="en"] .last-honeymoon-poem {
   margin-bottom: 4px;
 }
 
+.admin-token-input-row {
+  display: flex;
+  flex: 1 1 240px;
+  min-width: 0;
+  align-items: stretch;
+  gap: 8px;
+}
+
 .admin-token-input {
-  flex: 1 1 200px;
+  flex: 1;
   min-width: 0;
   padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 16px;
+}
+
+.admin-token-toggle {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+}
+
+.admin-token-toggle:hover {
+  background: #f5f5f5;
+}
+
+.admin-token-toggle[aria-pressed="true"] {
+  background: #eef6ff;
+  border-color: #87ceeb;
 }
 
 .admin-load-btn {
@@ -1154,8 +1183,22 @@ html[lang="en"] .last-honeymoon-poem {
 }
 
 .admin-table-wrap {
-  overflow-x: auto;
   margin-top: 16px;
+}
+
+.admin-table-scroll {
+  max-height: min(65vh, 520px);
+  overflow: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table-scroll .admin-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 1px 0 #e0e0e0;
 }
 
 .admin-table {

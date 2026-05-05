@@ -1,5 +1,6 @@
 (function () {
   const tokenInput = document.getElementById("admin-token");
+  const tokenToggle = document.getElementById("admin-token-toggle");
   const loadBtn = document.getElementById("admin-load-btn");
   const errorEl = document.getElementById("admin-error");
   const tableWrap = document.getElementById("admin-table-wrap");
@@ -88,6 +89,15 @@
   if (tokenInput) {
     tokenInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") load();
+    });
+  }
+  if (tokenToggle && tokenInput) {
+    tokenToggle.addEventListener("click", () => {
+      const visible = tokenInput.type === "text";
+      tokenInput.type = visible ? "password" : "text";
+      tokenToggle.setAttribute("aria-pressed", visible ? "false" : "true");
+      tokenToggle.setAttribute("aria-label", visible ? "Show admin token" : "Hide admin token");
+      tokenToggle.textContent = visible ? "Show" : "Hide";
     });
   }
 })();
