@@ -64,6 +64,10 @@
           } else {
             names = r.decline_name || "";
           }
+          const rowId = r.id != null && r.id !== "" ? String(r.id) : "";
+          const removeBtn = rowId
+            ? `<button type="button" class="admin-row-delete" data-id="${escapeHtml(rowId)}">Remove</button>`
+            : `<button type="button" class="admin-row-delete" disabled>—</button>`;
           return `<tr>
             <td>${escapeHtml(r.created_at || "")}</td>
             <td>${escapeHtml(r.attending || "")}</td>
@@ -71,6 +75,7 @@
             <td>${escapeHtml(names)}</td>
             <td>${r.attendee_count != null ? escapeHtml(String(r.attendee_count)) : "—"}</td>
             <td>${escapeHtml(r.message || "")}</td>
+            <td class="admin-col-actions">${removeBtn}</td>
           </tr>`;
         })
         .join("");
@@ -83,6 +88,48 @@
     } finally {
       loadBtn.disabled = false;
     }
+  }
+
+  async function removeRow(btn) {
+    const id = btn.getAttribute("data-id");
+    if (!id) return;
+    const token = tokenInput?.value?.trim() ?? "";
+    if (!token) {
+      showError("Enter the admin token.");
+      return;
+    }
+    if (!window.confirm("Remove this RSVP permanently? This cannot be undone.")) return;
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "…";
+    showError("");
+    try {
+      const res = await fetch("/api/admin/rsvps/" + encodeURIComponent(id), {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showError(data.error || "Could not remove row.");
+        btn.disabled = false;
+        btn.textContent = label;
+        return;
+      }
+      await load();
+    } catch {
+      showError("Network error.");
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  }
+
+  if (tbody) {
+    tbody.addEventListener("click", (e) => {
+      const btn = e.target.closest(".admin-row-delete");
+      if (!btn || btn.disabled || !tbody.contains(btn)) return;
+      e.preventDefault();
+      removeRow(btn);
+    });
   }
 
   if (loadBtn) loadBtn.addEventListener("click", load);

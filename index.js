@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { insertRsvp, listRsvps } = require("./rsvp-db");
+const { insertRsvp, listRsvps, deleteRsvpById } = require("./rsvp-db");
 const { validateAndNormalize } = require("./rsvp-validate");
 
 const PORT = process.env.PORT || 3000;
@@ -78,6 +78,40 @@ const server = http.createServer((req, res) => {
         res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
         res.end(JSON.stringify({ error: "Invalid JSON" }));
       });
+    return;
+  }
+
+  const adminRsvpDelete = /^\/api\/admin\/rsvps\/(\d+)$/.exec(pathname);
+  if (adminRsvpDelete && req.method === "DELETE") {
+    const adminToken = process.env.WEDDING_ADMIN_TOKEN;
+    if (!adminToken) {
+      res.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Admin token not configured on server" }));
+      return;
+    }
+    const auth = req.headers.authorization || "";
+    const match = /^Bearer\s+(.+)$/i.exec(auth);
+    const got = match ? match[1].trim() : "";
+    if (got !== adminToken) {
+      res.writeHead(401, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Unauthorized" }));
+      return;
+    }
+    const rowId = Number(adminRsvpDelete[1], 10);
+    try {
+      const removed = deleteRsvpById(rowId);
+      if (!removed) {
+        res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Not found" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ ok: true }));
+    } catch (err) {
+      console.error(err);
+      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Server error" }));
+    }
     return;
   }
 

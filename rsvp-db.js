@@ -35,6 +35,8 @@ const listStmt = db.prepare(`
   ORDER BY datetime(created_at) DESC
 `);
 
+const deleteStmt = db.prepare(`DELETE FROM rsvps WHERE id = ?`);
+
 function insertRsvp(row) {
   insertStmt.run({
     created_at: new Date().toISOString(),
@@ -51,4 +53,11 @@ function listRsvps() {
   return listStmt.all();
 }
 
-module.exports = { insertRsvp, listRsvps };
+function deleteRsvpById(id) {
+  const n = Number(id);
+  if (!Number.isInteger(n) || n < 1) return false;
+  const info = deleteStmt.run(n);
+  return info.changes > 0;
+}
+
+module.exports = { insertRsvp, listRsvps, deleteRsvpById };

@@ -1261,6 +1261,35 @@ html[lang="en"] .last-honeymoon-poem {
   font-weight: 500;
 }
 
+.admin-table .admin-col-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.admin-row-delete {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b1538;
+  background: #fff;
+  border: 1px solid #d4a5b0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-row-delete:hover:not(:disabled) {
+  background: #fff5f7;
+}
+
+.admin-row-delete:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: #666;
+  border-color: #ddd;
+}
+
 @media (max-width: 480px) {
   .navbar {
     flex-wrap: wrap;

@@ -76,4 +76,16 @@ async function listRsvpsPg() {
   return rows;
 }
 
-module.exports = { getSql, insertRsvpPg, listRsvpsPg };
+async function deleteRsvpPg(id) {
+  const sql = getSql();
+  if (!sql) throw new Error("POSTGRES_URL missing");
+  await ensureTable(sql);
+  const n = Number(id);
+  if (!Number.isInteger(n) || n < 1) return false;
+  const rows = await sql`
+    DELETE FROM rsvps WHERE id = ${n} RETURNING id
+  `;
+  return rows.length > 0;
+}
+
+module.exports = { getSql, insertRsvpPg, listRsvpsPg, deleteRsvpPg };
