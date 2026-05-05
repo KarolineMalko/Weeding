@@ -694,6 +694,22 @@ html[lang="en"] .last-honeymoon-poem {
   text-align: center;
 }
 
+/* Thank-you step: center message in the viewport (form is hidden) */
+.page-response .response-form-section:has(.rsvp-thank-you:not([hidden])) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 57px - 48px);
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: min(400px, calc(100vw - 32px));
+}
+
+.page-response .response-form-section:has(.rsvp-thank-you:not([hidden])) h1 {
+  display: none;
+}
+
 .page-response .rsvp-options {
   display: flex;
   flex-direction: column;
@@ -900,6 +916,10 @@ html[lang="en"] .last-honeymoon-poem {
 .rsvp-thank-you {
   text-align: center;
   padding: 24px 0;
+  width: 100%;
+  max-width: 28em;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .rsvp-thank-you-msg {
@@ -1034,6 +1054,11 @@ html[lang="en"] .last-honeymoon-poem {
   .page-response .response-form-section h1 {
     font-size: 26px;
     margin-bottom: 12px;
+  }
+
+  .page-response .response-form-section:has(.rsvp-thank-you:not([hidden])) {
+    min-height: calc(100vh - 46px - 36px);
+    max-width: min(360px, calc(100vw - 24px));
   }
 
   .page-admin .content.admin-content {
