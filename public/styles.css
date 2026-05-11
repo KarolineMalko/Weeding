@@ -1285,6 +1285,169 @@ html[lang="en"] .last-honeymoon-poem {
   margin: 0 0 12px 0;
 }
 
+.admin-table-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.admin-add-open-btn {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(145deg, #4aaf65, #2d8a45);
+  box-shadow: 0 2px 10px rgba(45, 138, 69, 0.35);
+  cursor: pointer;
+}
+
+.admin-add-open-btn:hover {
+  filter: brightness(1.06);
+}
+
+.admin-add-open-btn:focus-visible {
+  outline: 3px solid #87ceeb;
+  outline-offset: 2px;
+}
+
+.admin-add-dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  max-width: min(440px, calc(100vw - 32px));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+}
+
+.admin-add-dialog::backdrop {
+  background: rgba(15, 35, 55, 0.45);
+}
+
+.admin-add-dialog-inner {
+  padding: 0;
+}
+
+.admin-add-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 12px 22px;
+  border-bottom: 1px solid #e8eef5;
+}
+
+.admin-add-dialog-header h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a3a52;
+}
+
+.admin-add-dialog-close {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: #f0f4f8;
+  color: #345;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-add-dialog-close:hover {
+  background: #e2eaf3;
+}
+
+.admin-add-dialog-body {
+  padding: 18px 22px 8px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-add-dialog-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.admin-add-dialog-yes-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-add-select,
+.admin-add-input,
+.admin-add-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #c9d8ea;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.admin-add-textarea {
+  resize: vertical;
+  min-height: 88px;
+  font-family: inherit;
+}
+
+.admin-add-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 22px 20px 22px;
+  border-top: 1px solid #e8eef5;
+}
+
+.admin-add-cancel-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid #c9d8ea;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  color: #345;
+  cursor: pointer;
+}
+
+.admin-add-cancel-btn:hover {
+  background: #f5f8fb;
+}
+
+.admin-add-submit-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #7ecf95, #4aaf65);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f2918;
+  cursor: pointer;
+}
+
+.admin-add-submit-btn:hover:not(:disabled) {
+  filter: brightness(1.03);
+}
+
+.admin-add-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 .admin-table-wrap {
   margin-top: 16px;
 }

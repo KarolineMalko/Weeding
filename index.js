@@ -2,7 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { insertRsvp, listRsvps, deleteRsvpById } = require("./rsvp-db");
-const { validateAndNormalize } = require("./rsvp-validate");
+const { validateAndNormalize, applyAdminInviteOverlay } = require("./rsvp-validate");
 
 const PORT = process.env.PORT || 3000;
 const HOST = "127.0.0.1";
@@ -115,7 +115,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname === "/api/admin/rsvps" && req.method === "GET") {
+  if (pathname === "/api/admin/rsvps" && (req.method === "GET" || req.method === "POST")) {
     const adminToken = process.env.WEDDING_ADMIN_TOKEN;
     if (!adminToken) {
       res.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
@@ -130,15 +130,43 @@ const server = http.createServer((req, res) => {
       res.end(JSON.stringify({ error: "Unauthorized" }));
       return;
     }
-    try {
-      const rows = listRsvps();
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ rows }));
-    } catch (err) {
-      console.error(err);
-      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ error: "Server error" }));
+    if (req.method === "GET") {
+      try {
+        const rows = listRsvps();
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ rows }));
+      } catch (err) {
+        console.error(err);
+        res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Server error" }));
+      }
+      return;
     }
+
+    readJsonBody(req)
+      .then((body) => {
+        const v = validateAndNormalize(body);
+        if (!v.ok) {
+          res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: v.error }));
+          return;
+        }
+        const row = applyAdminInviteOverlay(body, v.row);
+        try {
+          insertRsvp(row);
+        } catch (err) {
+          console.error(err);
+          res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "Server error" }));
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ ok: true }));
+      })
+      .catch(() => {
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Invalid JSON" }));
+      });
     return;
   }
 

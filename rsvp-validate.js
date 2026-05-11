@@ -115,4 +115,13 @@ function legacyGuestNamesFromBody(body, name, n) {
   return out.length === n ? out : null;
 }
 
-module.exports = { validateAndNormalize, MAX_GUESTS };
+/** Optional invite code when inserting via admin (public RSVP keeps codes null). */
+function applyAdminInviteOverlay(body, row) {
+  if (!body || typeof body !== "object") return row;
+  const raw = body.invite_code ?? body.inviteCode;
+  if (typeof raw !== "string") return row;
+  const t = raw.trim().slice(0, 64);
+  return { ...row, invite_code: t || null };
+}
+
+module.exports = { validateAndNormalize, MAX_GUESTS, applyAdminInviteOverlay };

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
     <meta name="robots" content="noindex, nofollow" />
     <title>RSVP admin - Wedding</title>
-    <link rel="stylesheet" href="/public/styles.css?v=6" />
+    <link rel="stylesheet" href="/public/styles.css?v=8" />
   </head>
   <body class="page-admin">
     <main class="content admin-content">
@@ -32,6 +32,11 @@
         </div>
         <p class="admin-form-error" id="admin-error" hidden role="alert"></p>
         <div class="admin-table-wrap" id="admin-table-wrap" hidden>
+          <div class="admin-table-toolbar">
+            <button type="button" class="admin-add-open-btn" id="admin-add-open" aria-label="Add RSVP row">
+              +
+            </button>
+          </div>
           <div class="admin-table-scroll">
             <table class="admin-table" id="admin-table">
               <thead>
@@ -50,6 +55,49 @@
           </div>
           <p class="admin-summary" id="admin-summary"></p>
         </div>
+
+        <dialog id="admin-add-dialog" class="admin-add-dialog">
+          <div class="admin-add-dialog-inner">
+            <div class="admin-add-dialog-header">
+              <h2 id="admin-add-dialog-title">Add RSVP</h2>
+              <button type="button" class="admin-add-dialog-close" id="admin-add-dialog-close" aria-label="Close">
+                ×
+              </button>
+            </div>
+            <div class="admin-add-dialog-body">
+              <div class="admin-add-dialog-field">
+                <label for="admin-add-attending">Attendance</label>
+                <select id="admin-add-attending" class="admin-add-select">
+                  <option value="yes">Yes — attending</option>
+                  <option value="no">No — declined</option>
+                </select>
+              </div>
+              <div id="admin-add-yes-fields" class="admin-add-dialog-yes-block">
+                <div class="admin-add-dialog-field">
+                  <label for="admin-add-guests">Number of guests</label>
+                  <input type="number" id="admin-add-guests" class="admin-add-input" min="1" max="99" value="1" />
+                </div>
+                <div class="admin-add-dialog-field">
+                  <label for="admin-add-guest-names">Guest names</label>
+                  <textarea
+                    id="admin-add-guest-names"
+                    class="admin-add-textarea"
+                    rows="4"
+                    placeholder="Comma or newline separated. Must match the count above."
+                  ></textarea>
+                </div>
+              </div>
+              <div id="admin-add-no-fields" class="admin-add-dialog-field" hidden>
+                <label for="admin-add-name-no">Name</label>
+                <input type="text" id="admin-add-name-no" class="admin-add-input" autocomplete="name" />
+              </div>
+            </div>
+            <div class="admin-add-dialog-actions">
+              <button type="button" class="admin-add-cancel-btn" id="admin-add-cancel">Cancel</button>
+              <button type="button" class="admin-add-submit-btn" id="admin-add-submit">Add</button>
+            </div>
+          </div>
+        </dialog>
       </section>
     </main>
     <script src="/public/admin-page.js"></script>

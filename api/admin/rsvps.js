@@ -1,14 +1,30 @@
-const { listRsvpsPg, getSql } = require("../rsvp-pg");
+const { validateAndNormalize, applyAdminInviteOverlay } = require("../../rsvp-validate");
+const { insertRsvpPg, getSql, listRsvpsPg } = require("../rsvp-pg");
 const { sendJson } = require("../send-json");
+
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      try {
+        const raw = Buffer.concat(chunks).toString("utf8");
+        if (!raw.trim()) {
+          resolve({});
+          return;
+        }
+        resolve(JSON.parse(raw));
+      } catch (e) {
+        reject(e);
+      }
+    });
+    req.on("error", reject);
+  });
+}
 
 module.exports = async (req, res) => {
   if (req.method === "OPTIONS") {
     sendJson(res, 204);
-    return;
-  }
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET, OPTIONS");
-    sendJson(res, 405, { error: "Method not allowed" });
     return;
   }
 
@@ -37,11 +53,44 @@ module.exports = async (req, res) => {
     return;
   }
 
-  try {
-    const rows = await listRsvpsPg();
-    sendJson(res, 200, { rows });
-  } catch (err) {
-    console.error(err);
-    sendJson(res, 500, { error: "Server error" });
+  if (req.method === "GET") {
+    try {
+      const rows = await listRsvpsPg();
+      sendJson(res, 200, { rows });
+    } catch (err) {
+      console.error(err);
+      sendJson(res, 500, { error: "Server error" });
+    }
+    return;
   }
+
+  if (req.method === "POST") {
+    let body;
+    try {
+      body = await readJsonBody(req);
+    } catch {
+      sendJson(res, 400, { error: "Invalid JSON" });
+      return;
+    }
+
+    const v = validateAndNormalize(body);
+    if (!v.ok) {
+      sendJson(res, 400, { error: v.error });
+      return;
+    }
+
+    const row = applyAdminInviteOverlay(body, v.row);
+
+    try {
+      await insertRsvpPg(row);
+      sendJson(res, 200, { ok: true });
+    } catch (err) {
+      console.error(err);
+      sendJson(res, 500, { error: "Server error" });
+    }
+    return;
+  }
+
+  res.setHeader("Allow", "GET, POST, OPTIONS");
+  sendJson(res, 405, { error: "Method not allowed" });
 };
