@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
     <meta name="robots" content="noindex, nofollow" />
     <title>RSVP admin - Wedding</title>
-    <link rel="stylesheet" href="/public/styles.css?v=8" />
+    <link rel="stylesheet" href="/public/styles.css?v=9" />
   </head>
   <body class="page-admin">
     <main class="content admin-content">
@@ -47,7 +47,7 @@
                   <th>Name / names</th>
                   <th>#</th>
                   <th>Message</th>
-                  <th class="admin-col-actions">Remove</th>
+                  <th class="admin-col-actions">Actions</th>
                 </tr>
               </thead>
               <tbody id="admin-tbody"></tbody>
@@ -90,6 +90,22 @@
               <div id="admin-add-no-fields" class="admin-add-dialog-field" hidden>
                 <label for="admin-add-name-no">Name</label>
                 <input type="text" id="admin-add-name-no" class="admin-add-input" autocomplete="name" />
+              </div>
+              <div class="admin-add-dialog-field">
+                <label for="admin-add-invite">Invite code (optional)</label>
+                <input
+                  type="text"
+                  id="admin-add-invite"
+                  class="admin-add-input"
+                  maxlength="64"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="Leave blank for none"
+                />
+              </div>
+              <div class="admin-add-dialog-field">
+                <label for="admin-add-message">Message (optional)</label>
+                <textarea id="admin-add-message" class="admin-add-textarea" rows="2" placeholder="Notes from guest"></textarea>
               </div>
             </div>
             <div class="admin-add-dialog-actions">

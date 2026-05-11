@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { insertRsvp, listRsvps, deleteRsvpById } = require("./rsvp-db");
+const { insertRsvp, listRsvps, deleteRsvpById, updateRsvpById } = require("./rsvp-db");
 const { validateAndNormalize, applyAdminInviteOverlay } = require("./rsvp-validate");
 
 const PORT = process.env.PORT || 3000;
@@ -81,8 +81,8 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const adminRsvpDelete = /^\/api\/admin\/rsvps\/(\d+)$/.exec(pathname);
-  if (adminRsvpDelete && req.method === "DELETE") {
+  const adminRsvpById = /^\/api\/admin\/rsvps\/(\d+)$/.exec(pathname);
+  if (adminRsvpById && (req.method === "DELETE" || req.method === "PATCH")) {
     const adminToken = process.env.WEDDING_ADMIN_TOKEN;
     if (!adminToken) {
       res.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
@@ -97,21 +97,60 @@ const server = http.createServer((req, res) => {
       res.end(JSON.stringify({ error: "Unauthorized" }));
       return;
     }
-    const rowId = Number(adminRsvpDelete[1], 10);
-    try {
-      const removed = deleteRsvpById(rowId);
-      if (!removed) {
-        res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify({ error: "Not found" }));
-        return;
-      }
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ ok: true }));
-    } catch (err) {
-      console.error(err);
-      res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ error: "Server error" }));
+    const rowId = parseInt(adminRsvpById[1], 10);
+    if (!Number.isInteger(rowId) || rowId < 1) {
+      res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ error: "Invalid id" }));
+      return;
     }
+
+    if (req.method === "DELETE") {
+      try {
+        const removed = deleteRsvpById(rowId);
+        if (!removed) {
+          res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "Not found" }));
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ ok: true }));
+      } catch (err) {
+        console.error(err);
+        res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Server error" }));
+      }
+      return;
+    }
+
+    readJsonBody(req)
+      .then((body) => {
+        const v = validateAndNormalize(body);
+        if (!v.ok) {
+          res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: v.error }));
+          return;
+        }
+        const row = applyAdminInviteOverlay(body, v.row);
+        try {
+          const updated = updateRsvpById(rowId, row);
+          if (!updated) {
+            res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+            res.end(JSON.stringify({ error: "Not found" }));
+            return;
+          }
+        } catch (err) {
+          console.error(err);
+          res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "Server error" }));
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ ok: true }));
+      })
+      .catch(() => {
+        res.writeHead(400, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ error: "Invalid JSON" }));
+      });
     return;
   }
 

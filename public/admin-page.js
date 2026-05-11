@@ -8,6 +8,7 @@
   const summaryEl = document.getElementById("admin-summary");
 
   const addDialog = document.getElementById("admin-add-dialog");
+  const dialogTitleEl = document.getElementById("admin-add-dialog-title");
   const openAddBtn = document.getElementById("admin-add-open");
   const dialogCloseBtn = document.getElementById("admin-add-dialog-close");
   const cancelBtn = document.getElementById("admin-add-cancel");
@@ -18,10 +19,15 @@
   const guestsInput = document.getElementById("admin-add-guests");
   const guestNamesInput = document.getElementById("admin-add-guest-names");
   const nameNoInput = document.getElementById("admin-add-name-no");
+  const inviteInput = document.getElementById("admin-add-invite");
+  const messageInput = document.getElementById("admin-add-message");
   const addSubmitBtn = document.getElementById("admin-add-submit");
 
   const STORAGE_KEY = "wedding-admin-token";
   const MAX_GUESTS = 99;
+
+  let cachedRows = [];
+  let editingId = null;
 
   try {
     const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -56,23 +62,29 @@
     noFields.hidden = yes;
   }
 
-  function resetAddDialog() {
+  function resetDialogForm() {
     if (attendingSelect) attendingSelect.value = "yes";
     if (guestsInput) guestsInput.value = "1";
     if (guestNamesInput) guestNamesInput.value = "";
     if (nameNoInput) nameNoInput.value = "";
+    if (inviteInput) inviteInput.value = "";
+    if (messageInput) messageInput.value = "";
     toggleAttFields();
   }
 
   function closeAddDialog() {
+    editingId = null;
     if (addDialog && typeof addDialog.close === "function") {
       addDialog.close();
     }
   }
 
   function openAddDialog() {
+    editingId = null;
+    if (dialogTitleEl) dialogTitleEl.textContent = "Add RSVP";
+    if (addSubmitBtn) addSubmitBtn.textContent = "Add";
     showError("");
-    resetAddDialog();
+    resetDialogForm();
     if (addDialog && typeof addDialog.showModal === "function") {
       addDialog.showModal();
       requestAnimationFrame(() => {
@@ -85,8 +97,54 @@
     }
   }
 
-  function buildAddPayload() {
-    const body = {};
+  function openEditDialog(idStr) {
+    const id = String(idStr ?? "").trim();
+    const row = cachedRows.find((r) => String(r.id) === id);
+    if (!row) return;
+
+    editingId = id;
+    if (dialogTitleEl) dialogTitleEl.textContent = "Edit RSVP";
+    if (addSubmitBtn) addSubmitBtn.textContent = "Save";
+    showError("");
+    resetDialogForm();
+
+    if (inviteInput) inviteInput.value = row.invite_code || "";
+    if (messageInput) messageInput.value = row.message || "";
+    if (attendingSelect) attendingSelect.value = row.attending === "no" ? "no" : "yes";
+
+    if (row.attending === "yes") {
+      const count = Number(row.attendee_count);
+      if (guestsInput) guestsInput.value = Number.isFinite(count) && count >= 1 ? String(count) : "1";
+      let namesStr = "";
+      try {
+        const arr = JSON.parse(row.guest_names || "[]");
+        namesStr = Array.isArray(arr) ? arr.join(", ") : String(row.guest_names || "");
+      } catch {
+        namesStr = String(row.guest_names || "");
+      }
+      if (guestNamesInput) guestNamesInput.value = namesStr;
+    } else {
+      if (nameNoInput) nameNoInput.value = row.decline_name || "";
+    }
+
+    toggleAttFields();
+
+    if (addDialog && typeof addDialog.showModal === "function") {
+      addDialog.showModal();
+      requestAnimationFrame(() => {
+        if (attendingSelect && attendingSelect.value === "yes") {
+          guestNamesInput?.focus();
+        } else {
+          nameNoInput?.focus();
+        }
+      });
+    }
+  }
+
+  function buildDialogPayload() {
+    const message = messageInput?.value?.trim() ?? "";
+    const inviteRaw = inviteInput?.value?.trim() ?? "";
+    const base = { message, invite_code: inviteRaw };
 
     if (attendingSelect?.value === "no") {
       const name = nameNoInput?.value?.trim() ?? "";
@@ -94,7 +152,7 @@
         showError("Enter a name for the declined response.");
         return null;
       }
-      return { ...body, attending: "no", name };
+      return { ...base, attending: "no", name };
     }
 
     const rawN = guestsInput?.value?.trim() ?? "";
@@ -117,7 +175,7 @@
     }
 
     return {
-      ...body,
+      ...base,
       attending: "yes",
       name: parts[0],
       guestCount: n,
@@ -125,7 +183,7 @@
     };
   }
 
-  async function addRow() {
+  async function submitDialog() {
     showError("");
     const token = tokenInput?.value?.trim() ?? "";
     if (!token) {
@@ -137,13 +195,17 @@
       sessionStorage.setItem(STORAGE_KEY, token);
     } catch (_) {}
 
-    const payload = buildAddPayload();
+    const payload = buildDialogPayload();
     if (!payload) return;
+
+    const isEdit = editingId != null && editingId !== "";
+    const url = isEdit ? "/api/admin/rsvps/" + encodeURIComponent(editingId) : "/api/admin/rsvps";
+    const method = isEdit ? "PATCH" : "POST";
 
     if (addSubmitBtn) addSubmitBtn.disabled = true;
     try {
-      const res = await fetch("/api/admin/rsvps", {
-        method: "POST",
+      const res = await fetch(url, {
+        method,
         headers: {
           Authorization: "Bearer " + token,
           "Content-Type": "application/json",
@@ -152,11 +214,12 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        showError(data.error || "Could not add row (check token and server).");
+        showError(data.error || "Could not save (check token and server).");
         return;
       }
+      const prevEditing = editingId;
       closeAddDialog();
-      resetAddDialog();
+      if (!prevEditing) resetDialogForm();
       await load();
     } catch {
       showError("Network error.");
@@ -188,6 +251,8 @@
         return;
       }
       const rows = data.rows || [];
+      cachedRows = rows;
+
       tbody.innerHTML = rows
         .map((r) => {
           let names = "";
@@ -202,6 +267,9 @@
             names = r.decline_name || "";
           }
           const rowId = r.id != null && r.id !== "" ? String(r.id) : "";
+          const editBtn = rowId
+            ? `<button type="button" class="admin-row-edit" data-id="${escapeHtml(rowId)}">Edit</button>`
+            : `<button type="button" class="admin-row-edit" disabled>—</button>`;
           const removeBtn = rowId
             ? `<button type="button" class="admin-row-delete" data-id="${escapeHtml(rowId)}">Remove</button>`
             : `<button type="button" class="admin-row-delete" disabled>—</button>`;
@@ -212,7 +280,7 @@
             <td>${escapeHtml(names)}</td>
             <td>${r.attendee_count != null ? escapeHtml(String(r.attendee_count)) : "—"}</td>
             <td>${escapeHtml(r.message || "")}</td>
-            <td class="admin-col-actions">${removeBtn}</td>
+            <td class="admin-col-actions"><div class="admin-action-cell">${editBtn}${removeBtn}</div></td>
           </tr>`;
         })
         .join("");
@@ -262,16 +330,22 @@
 
   if (tbody) {
     tbody.addEventListener("click", (e) => {
-      const btn = e.target.closest(".admin-row-delete");
-      if (!btn || btn.disabled || !tbody.contains(btn)) return;
+      const editBtn = e.target.closest(".admin-row-edit");
+      if (editBtn && tbody.contains(editBtn) && !editBtn.disabled) {
+        e.preventDefault();
+        openEditDialog(editBtn.getAttribute("data-id"));
+        return;
+      }
+      const delBtn = e.target.closest(".admin-row-delete");
+      if (!delBtn || delBtn.disabled || !tbody.contains(delBtn)) return;
       e.preventDefault();
-      removeRow(btn);
+      removeRow(delBtn);
     });
   }
 
   if (loadBtn) loadBtn.addEventListener("click", load);
   if (openAddBtn) openAddBtn.addEventListener("click", openAddDialog);
-  if (addSubmitBtn) addSubmitBtn.addEventListener("click", addRow);
+  if (addSubmitBtn) addSubmitBtn.addEventListener("click", submitDialog);
   if (cancelBtn) cancelBtn.addEventListener("click", closeAddDialog);
   if (dialogCloseBtn) dialogCloseBtn.addEventListener("click", closeAddDialog);
   if (attendingSelect) attendingSelect.addEventListener("change", toggleAttFields);

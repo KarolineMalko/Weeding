@@ -88,4 +88,24 @@ async function deleteRsvpPg(id) {
   return rows.length > 0;
 }
 
-module.exports = { getSql, insertRsvpPg, listRsvpsPg, deleteRsvpPg };
+async function updateRsvpPg(id, row) {
+  const sql = getSql();
+  if (!sql) throw new Error("POSTGRES_URL missing");
+  await ensureTable(sql);
+  const n = Number(id);
+  if (!Number.isInteger(n) || n < 1) return false;
+  const rows = await sql`
+    UPDATE rsvps SET
+      attending = ${row.attending},
+      invite_code = ${row.invite_code ?? null},
+      decline_name = ${row.decline_name ?? null},
+      attendee_count = ${row.attendee_count ?? null},
+      guest_names = ${row.guest_names ?? null},
+      message = ${row.message ?? null}
+    WHERE id = ${n}
+    RETURNING id
+  `;
+  return rows.length > 0;
+}
+
+module.exports = { getSql, insertRsvpPg, listRsvpsPg, deleteRsvpPg, updateRsvpPg };

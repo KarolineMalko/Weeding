@@ -37,6 +37,17 @@ const listStmt = db.prepare(`
 
 const deleteStmt = db.prepare(`DELETE FROM rsvps WHERE id = ?`);
 
+const updateStmt = db.prepare(`
+  UPDATE rsvps SET
+    attending = @attending,
+    invite_code = @invite_code,
+    decline_name = @decline_name,
+    attendee_count = @attendee_count,
+    guest_names = @guest_names,
+    message = @message
+  WHERE id = @id
+`);
+
 function insertRsvp(row) {
   insertStmt.run({
     created_at: new Date().toISOString(),
@@ -60,4 +71,19 @@ function deleteRsvpById(id) {
   return info.changes > 0;
 }
 
-module.exports = { insertRsvp, listRsvps, deleteRsvpById };
+function updateRsvpById(id, row) {
+  const n = Number(id);
+  if (!Number.isInteger(n) || n < 1) return false;
+  const info = updateStmt.run({
+    id: n,
+    attending: row.attending,
+    invite_code: row.invite_code ?? null,
+    decline_name: row.decline_name ?? null,
+    attendee_count: row.attendee_count ?? null,
+    guest_names: row.guest_names ?? null,
+    message: row.message ?? null,
+  });
+  return info.changes > 0;
+}
+
+module.exports = { insertRsvp, listRsvps, deleteRsvpById, updateRsvpById };

@@ -1499,6 +1499,36 @@ html[lang="en"] .last-honeymoon-poem {
   vertical-align: middle;
 }
 
+.admin-action-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-row-edit {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d5c7c;
+  background: #fff;
+  border: 1px solid #9dcae0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-row-edit:hover:not(:disabled) {
+  background: #f0f9fc;
+}
+
+.admin-row-edit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: #666;
+  border-color: #ddd;
+}
+
 .admin-row-delete {
   padding: 6px 10px;
   font-size: 13px;
