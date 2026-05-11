@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Karoline Erik//Wedding//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-karoline-erik-20260725@wedding.local
+DTSTAMP:20260511T120000Z
+DTSTART:20260725T140000Z
+DTEND:20260725T210000Z
+SUMMARY:Karoline & Erik — Wedding
+DESCRIPTION:Church: Hedvig Eleonora kyrka\, Storgatan 2\, 16:00\nReception: Cello Slottet\, Segersbyvägen 7\, 18:00
+LOCATION:Stockholm area
+END:VEVENT
+END:VCALENDAR

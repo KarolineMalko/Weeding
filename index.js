@@ -194,6 +194,8 @@ const server = http.createServer((req, res) => {
                       ? "video/mp4"
                       : ext === ".mov"
                         ? "video/quicktime"
+                        : ext === ".ics"
+                          ? "text/calendar; charset=utf-8"
                         : "application/octet-stream";
       res.writeHead(200, { "Content-Type": contentType });
       res.end(file);

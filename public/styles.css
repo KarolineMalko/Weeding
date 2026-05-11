@@ -261,13 +261,47 @@ body {
   margin-top: 32px;
 }
 
+.page-home .home-hero .home-date-block {
+  margin-top: 20px;
+}
+
 .page-home .home-hero .home-date {
   font-family: "Dancing Script", "Georgia", "Times New Roman", cursive;
   font-size: 26px;
   letter-spacing: 0.08em;
-  margin-top: 20px;
+  margin-top: 0;
   margin-bottom: 0;
   opacity: 0.95;
+}
+
+.page-home .home-hero .home-calendar-link {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 13px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: rgba(247, 244, 240, 0.88);
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.29);
+  border: 1px solid rgba(247, 244, 240, 0.25);
+  border-radius: 999px;
+  box-shadow:
+    0 1px 8px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  opacity: 1;
+}
+
+.page-home .home-hero .home-calendar-link:hover {
+  background: rgba(0, 0, 0, 0.37);
+  border-color: rgba(247, 244, 240, 0.4);
+  color: rgba(255, 254, 251, 0.98);
+}
+
+.page-home .home-hero .home-calendar-link:focus-visible {
+  outline: 2px solid rgba(247, 244, 240, 0.58);
+  outline-offset: 2px;
 }
 
 .page-church .content {
@@ -1018,9 +1052,18 @@ html[lang="en"] .last-honeymoon-poem {
     margin-top: 28px;
   }
 
+  .page-home .home-hero .home-date-block {
+    margin-top: 16px;
+  }
+
   .page-home .home-hero .home-date {
     font-size: 20px;
-    margin-top: 16px;
+  }
+
+  .page-home .home-hero .home-calendar-link {
+    font-size: 12px;
+    margin-top: 8px;
+    padding: 5px 11px;
   }
 
   .page-church .content {
@@ -1342,8 +1385,17 @@ html[lang="en"] .last-honeymoon-poem {
     margin-top: 28px;
   }
 
+  .page-home .home-hero .home-date-block {
+    margin-top: 14px;
+  }
+
   .page-home .home-hero .home-date {
     font-size: 18px;
-    margin-top: 14px;
+  }
+
+  .page-home .home-hero .home-calendar-link {
+    font-size: 11px;
+    margin-top: 7px;
+    padding: 5px 10px;
   }
 }
